@@ -8,6 +8,6 @@
         public const string Discord = "https://discord.gg/2WAsvv5B5v";
         public const string BugReport = "https://github.com/frosty-dev/space-station-14/issues/new/choose";
         public const string Website = "https://station13.ru";
-        public const string Wiki = "https://wiki.station13.ru";
+        public const string Wiki = "https://wiki.station13.ru/Starter_Guide";
     }
 }
