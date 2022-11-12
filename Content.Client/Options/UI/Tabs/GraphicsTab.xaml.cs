@@ -77,6 +77,7 @@ namespace Content.Client.Options.UI.Tabs
                 if (name == hudLayout)
                 {
                     HudLayoutOption.SelectId(id);
+                    HudLayoutWarningText.Visible = name == ScreenType.Default.ToString();
                 }
                 HudLayoutOption.SetItemMetadata(id, name);
 
