@@ -1135,7 +1135,7 @@ namespace Content.Shared.CCVar
          */
 
         public static readonly CVarDef<string> UILayout =
-            CVarDef.Create("ui.layout", "Default", CVar.CLIENTONLY | CVar.ARCHIVE);
+            CVarDef.Create("ui.layout", "Separated", CVar.CLIENTONLY | CVar.ARCHIVE);
 
 
 
@@ -1343,7 +1343,7 @@ namespace Content.Shared.CCVar
         /// </summary>
         public static readonly CVarDef<float>
             PlayTimeSaveInterval = CVarDef.Create("playtime.save_interval", 900f, CVar.SERVERONLY);
-        
+
         /**
          * SPONSORS
          */
