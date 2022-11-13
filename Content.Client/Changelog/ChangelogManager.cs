@@ -76,7 +76,7 @@ namespace Content.Client.Changelog
             var paths = new List<ResourcePath>()
             {
                 new ResourcePath("/Changelog/Changelog.yml"),
-                new ResourcePath("/Changelog/ChangelogSyndie.yml")
+                new ResourcePath("/Changelog/ChangelogSyndie.yml"),
                 new ResourcePath("/Changelog/ChangelogWhite.yml")
             };
 
