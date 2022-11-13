@@ -77,6 +77,7 @@ namespace Content.Client.Changelog
             {
                 new ResourcePath("/Changelog/Changelog.yml"),
                 new ResourcePath("/Changelog/ChangelogSyndie.yml")
+                new ResourcePath("/Changelog/ChangelogWhite.yml")
             };
 
             var result = new List<ChangelogEntry>();
