@@ -9,6 +9,7 @@ using Content.Shared.GameTicking;
 using Content.Shared.Preferences;
 using JetBrains.Annotations;
 using Prometheus;
+using Robust.Server;
 using Robust.Server.Maps;
 using Robust.Server.Player;
 using Robust.Shared.Audio;
@@ -26,6 +27,8 @@ namespace Content.Server.GameTicking
     public sealed partial class GameTicker
     {
         [Dependency] private readonly ITaskManager _taskManager = default!;
+
+        [Dependency] private readonly IBaseServer _server = default!;
 
         private static readonly Counter RoundNumberMetric = Metrics.CreateCounter(
             "ss14_round_number",
@@ -67,6 +70,9 @@ namespace Content.Server.GameTicking
 
         [ViewVariables]
         public int RoundId { get; private set; }
+
+        [ViewVariables]
+        public int RoundsWithoutRestart = 0;
 
         /// <summary>
         ///     Loads all the maps for the given round.
@@ -383,6 +389,13 @@ namespace Content.Server.GameTicking
             SendServerMessage(Loc.GetString("game-ticker-restart-round"));
 
             RoundNumberMetric.Inc();
+
+            RoundsWithoutRestart++;
+
+            int AutorestartRoundsDefinedInConfig = _configurationManager.GetCVar(CCVars.AutorestartRounds);
+
+            if(AutorestartRoundsDefinedInConfig != 0 && RoundsWithoutRestart == AutorestartRoundsDefinedInConfig)
+                _server.Shutdown(Loc.GetString("server-autorestart"));
 
             PlayersJoinedRoundNormally = 0;
 

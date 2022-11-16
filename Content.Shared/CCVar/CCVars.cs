@@ -1353,5 +1353,15 @@ namespace Content.Shared.CCVar
         /// </summary>
         public static readonly CVarDef<string> SponsorsApiUrl =
             CVarDef.Create("sponsor.api_url", "", CVar.SERVERONLY);
+
+        /**
+         * Autorestart
+         */
+
+        /// <summary>
+        /// Number of rounds per server restart. 0 - disabled.
+        /// </summary>
+        public static readonly CVarDef<int> AutorestartRounds =
+            CVarDef.Create("autorestart.rounds", 3, CVar.SERVERONLY);
     }
 }
