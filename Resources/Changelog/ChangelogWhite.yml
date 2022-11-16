@@ -1,6 +1,14 @@
 Entries:
 - author: Valtos
   changes:
-  - {message: Added separate fork changelog too, type: Add}
+  - message: Added separate fork changelog too
+    type: Add
   id: 1
   time: '2022-11-13T09:00:00.0000000+00:00'
+- author: Valtosin
+  changes:
+  - message: "\u041E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u044B \u043F\u0440\u0430\
+      \u0432\u0438\u043B\u0430."
+    type: Tweak
+  id: 2
+  time: '2022-11-15T17:07:10.0000000+00:00'
