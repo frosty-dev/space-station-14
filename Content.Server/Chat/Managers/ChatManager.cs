@@ -38,7 +38,7 @@ namespace Content.Server.Chat.Managers
         [Dependency] private readonly IServerPreferencesManager _preferencesManager = default!;
         [Dependency] private readonly IConfigurationManager _configurationManager = default!;
         [Dependency] private readonly IEntityManager _entityManager = default!;
-        [Dependency] private readonly SponsorsManager _sponsorsManager = default!;
+        [Dependency] private readonly ServerSponsorsManager _sponsorsManager = default!; // Corvax-Sponsors
 
         private StationSystem _stationSystem = default!;
 
@@ -101,7 +101,7 @@ namespace Content.Server.Chat.Managers
             var wrappedMessage = Loc.GetString("chat-manager-send-admin-announcement-wrap-message",
                 ("adminChannelName", Loc.GetString("chat-manager-admin-channel-name")), ("message", FormattedMessage.EscapeText(message)));
 
-            ChatMessageToMany(ChatChannel.Admin, message, wrappedMessage, default, false, clients.ToList());
+            ChatMessageToMany(ChatChannel.Admin, message, wrappedMessage, default, false, clients);
             _adminLogger.Add(LogType.Chat, LogImpact.Low, $"Admin announcement from {message}: {message}");
         }
 
@@ -177,11 +177,13 @@ namespace Content.Server.Chat.Managers
                 wrappedMessage = Loc.GetString("chat-manager-send-ooc-patron-wrap-message", ("patronColor", patronColor),("playerName", player.Name), ("message", FormattedMessage.EscapeText(message)));
             }
 
+            // Corvax-Sponsors-Start
             var sponsorData = _sponsorsManager.GetSponsorInfo(player.UserId);
             if (sponsorData?.OOCColor != null)
             {
-                wrappedMessage = Loc.GetString("chat-manager-send-ooc-patron-wrap-message", ("patronColor", sponsorData.Value.OOCColor),("playerName", player.Name), ("message", FormattedMessage.EscapeText(message)));
+                wrappedMessage = Loc.GetString("chat-manager-send-ooc-patron-wrap-message", ("patronColor", sponsorData.OOCColor),("playerName", player.Name), ("message", FormattedMessage.EscapeText(message)));
             }
+            // Corvax-Sponsors-End
 
             //TODO: player.Name color, this will need to change the structure of the MsgChatMessage
             ChatMessageToAll(ChatChannel.OOC, message, wrappedMessage, colorOverride);
@@ -225,7 +227,7 @@ namespace Content.Server.Chat.Managers
             _netManager.ServerSendMessage(msg, client);
         }
 
-        public void ChatMessageToMany(ChatChannel channel, string message, string wrappedMessage, EntityUid source, bool hideChat, List<INetChannel> clients, Color? colorOverride = null)
+        public void ChatMessageToMany(ChatChannel channel, string message, string wrappedMessage, EntityUid source, bool hideChat, IEnumerable<INetChannel> clients, Color? colorOverride = null)
         {
             var msg = new MsgChatMessage();
             msg.Channel = channel;
@@ -237,7 +239,7 @@ namespace Content.Server.Chat.Managers
             {
                 msg.MessageColorOverride = colorOverride.Value;
             }
-            _netManager.ServerSendToMany(msg, clients);
+            _netManager.ServerSendToMany(msg, clients.ToList());
         }
 
         public void ChatMessageToManyFiltered(Filter filter, ChatChannel channel, string message, string wrappedMessage, EntityUid source,

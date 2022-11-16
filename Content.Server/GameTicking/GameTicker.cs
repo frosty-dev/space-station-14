@@ -17,6 +17,7 @@ using Content.Shared.Damage;
 using Content.Shared.GameTicking;
 using Content.Shared.Roles;
 using Robust.Server;
+using Robust.Server.GameObjects;
 using Robust.Server.Maps;
 using Robust.Shared.Configuration;
 using Robust.Shared.Console;
@@ -34,6 +35,8 @@ namespace Content.Server.GameTicking
 {
     public sealed partial class GameTicker : SharedGameTicker
     {
+        [Dependency] private readonly MapLoaderSystem _map = default!;
+
         [ViewVariables] private bool _initialized;
         [ViewVariables] private bool _postInitialized;
 
@@ -97,7 +100,6 @@ namespace Content.Server.GameTicking
         }
 
         [Dependency] private readonly IMapManager _mapManager = default!;
-        [Dependency] private readonly IMapLoader _mapLoader = default!;
         [Dependency] private readonly IGameTiming _gameTiming = default!;
         [Dependency] private readonly IConfigurationManager _configurationManager = default!;
         [Dependency] private readonly IChatManager _chatManager = default!;
@@ -110,7 +112,7 @@ namespace Content.Server.GameTicking
         [Dependency] private readonly IAdminLogManager _adminLogger = default!;
         [Dependency] private readonly ILogManager _logManager = default!;
         [Dependency] private readonly IConsoleHost _consoleHost = default!;
-        [Dependency] private readonly SponsorsManager _sponsorsManager = default!; // Corvax-Sponsors
+        [Dependency] private readonly ServerSponsorsManager _sponsorsManager = default!; // Corvax-Sponsors
 #if EXCEPTION_TOLERANCE
         [Dependency] private readonly IRuntimeLog _runtimeLog = default!;
 #endif

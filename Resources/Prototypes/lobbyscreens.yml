@@ -29,3 +29,7 @@
 - type: lobbyBackground
   id: White
   background: /Textures/LobbyScreens/white.png
+
+- type: lobbyBackground
+  id: SSXIV
+  background: /Textures/LobbyScreens/ssxiv.png
