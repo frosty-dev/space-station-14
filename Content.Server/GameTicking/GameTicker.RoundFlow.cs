@@ -390,12 +390,12 @@ namespace Content.Server.GameTicking
 
             RoundNumberMetric.Inc();
 
-            RoundsWithoutRestart++;
-
             int AutorestartRoundsDefinedInConfig = _configurationManager.GetCVar(CCVars.AutorestartRounds);
 
             if(AutorestartRoundsDefinedInConfig != 0 && RoundsWithoutRestart == AutorestartRoundsDefinedInConfig)
                 _server.Shutdown(Loc.GetString("server-autorestart"));
+
+            RoundsWithoutRestart++;
 
             PlayersJoinedRoundNormally = 0;
 
