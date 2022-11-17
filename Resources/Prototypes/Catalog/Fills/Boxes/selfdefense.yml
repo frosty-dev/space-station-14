@@ -1,0 +1,15 @@
+- type: entity
+  name: personal defense box
+  parent: BoxCardboard
+  id: BoxSelfDef
+  description: It's a box with a weapon inside.
+  components:
+  - type: StorageFill
+    contents:
+      - id: WeaponPistolMk58
+      - id: MagazinePistol
+      - id: MagazinePistol
+      - id: MagazinePistol
+  - type: Sprite
+    layers:
+      - state: box_security

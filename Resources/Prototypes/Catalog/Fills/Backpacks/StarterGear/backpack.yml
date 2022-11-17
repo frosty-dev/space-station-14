@@ -6,6 +6,7 @@
   - type: StorageFill
     contents:
       - id: BoxSurvival
+      - id: BoxSelfDef
 
 - type: entity
   noSpawn: true
@@ -17,6 +18,7 @@
       - id: BoxHug
       - id: RubberStampClown
       - id: CrayonRainbow
+      - id: BoxSelfDef
 
 - type: entity
   noSpawn: true
@@ -28,6 +30,7 @@
       - id: BoxSurvivalSecurity
       - id: Flash
       - id: PaperTenCodes
+      - id: BoxSelfDef
 
 - type: entity
   noSpawn: true
@@ -37,6 +40,7 @@
   - type: StorageFill
     contents:
       - id: BoxSurvivalMedical
+      - id: BoxSelfDef
 
 - type: entity
   noSpawn: true
@@ -46,6 +50,7 @@
   - type: StorageFill
     contents:
       - id: BoxSurvival
+      - id: BoxSelfDef
       #- name: StationCharter
       #- name: TelescopicBaton
 
@@ -57,6 +62,7 @@
   - type: StorageFill
     contents:
       - id: BoxSurvivalEngineering
+      - id: BoxSelfDef
 
 - type: entity
   noSpawn: true
@@ -66,6 +72,7 @@
   - type: StorageFill
     contents:
       - id: BoxSurvival
+      - id: BoxSelfDef
 
 - type: entity
   noSpawn: true
@@ -75,6 +82,7 @@
   - type: StorageFill
     contents:
       - id: BoxSurvival
+      - id: BoxSelfDef
 
 - type: entity
   noSpawn: true
@@ -85,6 +93,7 @@
     contents:
       - id: BoxSurvival
       - id: RubberStampMime
+      - id: BoxSelfDef
 
 - type: entity
   noSpawn: true
@@ -94,6 +103,7 @@
   - type: StorageFill
     contents:
       - id: BoxSurvival
+      - id: BoxSelfDef
 
 - type: entity
   noSpawn: true
@@ -105,6 +115,7 @@
       - id: BoxSurvival
       - id: Bible
       - id: RubberStampChaplain
+      - id: BoxSelfDef
 
 - type: entity
   noSpawn: true
@@ -116,6 +127,7 @@
         - id: BoxSurvival
         - id: AcousticGuitarInstrument
         - id: SaxophoneInstrument
+        - id: BoxSelfDef
 
 - type: entity
   noSpawn: true
@@ -129,6 +141,7 @@
       - id: CigPackBlack
       - id: HandLabeler
       - id: BoxForensicPad
+      - id: BoxSelfDef
 
 # ERT
 
@@ -145,6 +158,7 @@
         - id: MagazinePistolHighCapacityRubber
         - id: MagazinePistol
         - id: Handcuffs
+        - id: BoxSelfDef
 
 
 - type: entity
@@ -160,6 +174,7 @@
         - id: WeaponPulseCarbine
         - id: BoxHandcuff
         - id: Handcuffs
+        - id: BoxSelfDef
 
 - type: entity
   noSpawn: true
@@ -172,6 +187,7 @@
         - id: WeaponPulseCarbine
         - id: Hypospray
         - id: MedkitAdvancedFilled
+        - id: BoxSelfDef
 
 
 - type: entity
@@ -188,6 +204,7 @@
         - id: RCDAmmo
         - id: RCDAmmo
         - id: RCDAmmo
+        - id: BoxSelfDef
 
 - type: entity
   noSpawn: true
@@ -202,6 +219,7 @@
         - id: BoxLightMixed
         - id: BoxLightMixed
         - id: Soap
+        - id: BoxSelfDef
 
 - type: entity
   noSpawn: true
@@ -211,4 +229,4 @@
     - type: StorageFill
       contents:
         - id: BoxSurvival
-
+        - id: BoxSelfDef

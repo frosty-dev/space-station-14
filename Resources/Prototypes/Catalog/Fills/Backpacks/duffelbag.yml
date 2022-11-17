@@ -12,6 +12,7 @@
       - id: Cautery
       - id: Retractor
       - id: Scalpel
+      - id: BoxSelfDef
 
 - type: entity
   id: ClothingBackpackDuffelCBURN
@@ -28,6 +29,7 @@
         amount: 2
       - id: PillRomerol
         amount: 5
+      - id: BoxSelfDef
 
 - type: entity
   parent: ClothingBackpackDuffelSyndicateMedicalBundle
@@ -43,6 +45,7 @@
       - id: Cautery
       - id: Retractor
       - id: ScalpelAdvanced
+      - id: BoxSelfDef
 
 - type: entity
   parent: ClothingBackpackDuffelSyndicateAmmoBundle
@@ -55,6 +58,7 @@
       - id: WeaponShotgunBulldog
       - id: MagazineShotgun
       - id: MagazineShotgunBeanbag
+      - id: BoxSelfDef
 #     - id: ThermalImagingGoggles
 
 - type: entity
@@ -68,6 +72,7 @@
       - id: WeaponSubMachineGunC20r
       - id: MagazinePistolSubMachineGun
         amount: 2
+      - id: BoxSelfDef
 #     - id: SMGSuppressor
 
 - type: entity
@@ -78,6 +83,7 @@
   components:
   - type: StorageFill
     contents:
+      - id: BoxSelfDef
       - id: WeaponRevolverPython
       - id: SpeedLoaderMagnum
         amount: 2
@@ -90,6 +96,7 @@
   components:
   - type: StorageFill
     contents:
+      - id: BoxSelfDef
       - id: WeaponLightMachineGunL6
       - id: MagazineLightRifleBox
 
@@ -101,6 +108,7 @@
   components:
   - type: StorageFill
     contents:
+      - id: BoxSelfDef
       - id: WeaponLauncherChinaLake
       - id: GrenadeBlast
         amount: 4
@@ -115,6 +123,7 @@
   components:
   - type: StorageFill
     contents:
+      - id: BoxSelfDef
       - id: WeaponRifleM90GrenadeLauncher
       - id: MagazineRifle
         amount: 2
@@ -135,6 +144,7 @@
     tags: [] # ignore "WhitelistChameleon" tag
   - type: StorageFill
     contents:
+      - id: BoxSelfDef
       - id: ClothingHeadHatCaptain
       - id: ClothingEyesGlassesSunglasses
       - id: ClothingUniformJumpsuitCentcomOfficial
@@ -155,6 +165,7 @@
     tags: [] # ignore "WhitelistChameleon" tag
   - type: StorageFill
     contents:
+      - id: BoxSelfDef
       - id: ClothingUniformJumpsuitClown
       - id: ClothingShoesClown
       - id: ClothingMaskClown
@@ -170,6 +181,7 @@
   components:
   - type: StorageFill
     contents:
+      - id: BoxSelfDef
       - id: ClothingUniformJumpsuitPyjamaSyndicateRed
       - id: ClothingUniformJumpsuitPyjamaSyndicateBlack
       - id: ClothingUniformJumpsuitPyjamaSyndicatePink
@@ -193,6 +205,7 @@
   components:
     - type: StorageFill
       contents:
+        - id: BoxSelfDef
         - id: C4
           amount: 8
 
@@ -203,6 +216,7 @@
   components:
     - type: StorageFill
       contents:
+        - id: BoxSelfDef
         - id: ClothingUniformJumpsuitChameleon
         - id: ClothingOuterChameleon
         - id: ClothingNeckChameleon
@@ -221,6 +235,7 @@
   components:
   - type: StorageFill
     contents:
+      - id: BoxSelfDef
       - id: ClothingHeadHelmetSyndicate
       - id: ClothingOuterHardsuitSyndicate
 
@@ -232,6 +247,7 @@
   components:
   - type: StorageFill
     contents:
+      - id: BoxSelfDef
       - id: ClothingOuterHardsuitSyndie
 
 - type: entity
@@ -242,6 +258,7 @@
   components:
   - type: StorageFill
     contents:
+      - id: BoxSelfDef
       - id: SyringeCorpium
       - id: WeaponFlareGun
       - id: BoxShotgunFlare
@@ -255,6 +272,7 @@
   components:
   - type: StorageFill
     contents:
+      - id: BoxSelfDef
       - id: BoxSurvivalSyndicate
       - id: WeaponPistolViper
       - id: PinpointerNuclear
@@ -268,6 +286,7 @@
   components:
   - type: StorageFill
     contents:
+      - id: BoxSelfDef
       - id: Hemostat
       - id: SawAdvanced
       - id: Drill
