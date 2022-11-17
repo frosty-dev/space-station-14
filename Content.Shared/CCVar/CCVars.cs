@@ -1362,6 +1362,6 @@ namespace Content.Shared.CCVar
         /// Number of rounds per server restart. 0 - disabled.
         /// </summary>
         public static readonly CVarDef<int> AutorestartRounds =
-            CVarDef.Create("autorestart.rounds", 3, CVar.SERVERONLY);
+            CVarDef.Create("autorestart.rounds", 0, CVar.SERVERONLY);
     }
 }
