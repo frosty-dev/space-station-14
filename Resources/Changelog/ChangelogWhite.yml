@@ -21,3 +21,9 @@ Entries:
     type: Add
   id: 3
   time: '2022-11-16T18:08:19.0000000+00:00'
+- author: rhailrake
+  changes:
+  - message: "\u0414\u043E\u0431\u0430\u0432\u043B\u0435\u043D GroupExamineComponent"
+    type: Add
+  id: 4
+  time: '2022-11-17T16:20:59.0000000+00:00'
