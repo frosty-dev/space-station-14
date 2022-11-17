@@ -16,7 +16,8 @@
         Piercing: 0.9
         Heat: 0.75
   - type: ExplosionResistance
-    damageCoefficient: 0.65 
+    damageCoefficient: 0.65
+  - type: GroupExamine
 
 - type: entity
   parent: ClothingOuterEVASuitBase
@@ -38,6 +39,7 @@
   - type: ContainerContainer
     containers:
       toggleable-clothing: !type:ContainerSlot {}
+  - type: GroupExamine
 
 - type: entity
   parent: ClothingOuterBaseLarge
@@ -59,6 +61,7 @@
     sprintModifier: 0.7
   - type: TemperatureProtection
     coefficient: 0.01
+  - type: GroupExamine
 
 - type: entity
   parent: ClothingOuterBaseLarge
@@ -75,6 +78,7 @@
         Radiation: 0.05
   - type: Clothing
     sprite: Clothing/OuterClothing/Suits/rad.rsi
+  - type: GroupExamine
 
 - type: entity
   parent: ClothingOuterBase
@@ -150,3 +154,5 @@
   - type: ClothingSpeedModifier
     walkModifier: 0.7
     sprintModifier: 0.75
+  - type: GroupExamine
+
