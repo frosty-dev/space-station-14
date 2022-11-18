@@ -9,6 +9,6 @@
         public const string BugReport = "https://github.com/frosty-dev/space-station-14/issues/new/choose";
         public const string Website = "https://ss14.station13.ru";
         public const string Donate = "https://ss14.station13.ru/donate";
-        public const string Wiki = "https://wiki.station13.ru/Starter_Guide";
+        public const string Wiki = "https://wiki.ss14.station13.ru/Starter_Guide";
     }
 }
