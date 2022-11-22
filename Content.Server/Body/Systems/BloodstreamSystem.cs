@@ -1,3 +1,4 @@
+using Content.Server.Alert.Commands;
 using Content.Server.Body.Components;
 using Content.Server.Chemistry.EntitySystems;
 using Content.Server.Chemistry.ReactionEffects;
@@ -18,11 +19,13 @@ using Robust.Shared.Audio;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
+using Content.Shared.Alert;
 
 namespace Content.Server.Body.Systems;
 
 public sealed class BloodstreamSystem : EntitySystem
 {
+    [Dependency] private readonly AlertsSystem _alertsSystem = default!;
     [Dependency] private readonly SolutionContainerSystem _solutionContainerSystem = default!;
     [Dependency] private readonly DamageableSystem _damageableSystem = default!;
     [Dependency] private readonly SpillableSystem _spillableSystem = default!;
@@ -92,6 +95,19 @@ public sealed class BloodstreamSystem : EntitySystem
             var uid = bloodstream.Owner;
             if (TryComp<MobStateComponent>(uid, out var state) && state.IsDead())
                 continue;
+
+            /// <summary>
+            ///     Check for bleeding alert.
+            /// </summary>
+
+            if (bloodstream.IsBleeding)
+            {
+                _alertsSystem.ShowAlert(bloodstream.Owner, AlertType.Bleeding);
+            }
+            else
+            {
+                _alertsSystem.ClearAlert(bloodstream.Owner, AlertType.Bleeding);
+            }
 
             // First, let's refresh their blood if possible.
             if (bloodstream.BloodSolution.CurrentVolume < bloodstream.BloodSolution.MaxVolume)

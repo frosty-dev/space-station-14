@@ -178,6 +178,13 @@
   maxSeverity: 6
 
 - type: alert
+  id: Bleeding
+  category: Health
+  icons: [ /Textures/Interface/Alerts/bleeding.png ]
+  name: alerts-bleeding-name
+  description: alerts-bleeding-desc
+
+- type: alert
   id: Internals
   category: Internals
   onClick: !type:ToggleInternals {}
