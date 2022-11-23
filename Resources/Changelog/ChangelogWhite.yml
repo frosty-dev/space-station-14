@@ -47,3 +47,15 @@ Entries:
     type: Add
   id: 6
   time: '2022-11-23T16:16:44.0000000+00:00'
+- author: rhailrake
+  changes:
+  - message: Character deletion confirm button.
+    type: Add
+  id: 7
+  time: '2022-11-23T19:42:12.0000000+00:00'
+- author: rhailrake
+  changes:
+  - message: translate IsBleeding
+    type: Add
+  id: 8
+  time: '2022-11-23T19:42:34.0000000+00:00'
