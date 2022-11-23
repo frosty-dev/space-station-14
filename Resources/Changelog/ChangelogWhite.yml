@@ -37,3 +37,13 @@ Entries:
     type: Tweak
   id: 5
   time: '2022-11-21T16:26:31.0000000+00:00'
+- author: rhailrake
+  changes:
+  - message: IsBleeding
+    type: Add
+  - message: Bleeding icon
+    type: Add
+  - message: blood desc and name in Alerts.ftl
+    type: Add
+  id: 6
+  time: '2022-11-23T16:16:44.0000000+00:00'
