@@ -7,10 +7,10 @@
   requirements:
     - !type:RoleTimeRequirement
       role: JobChemist
-      time: 18000
+      time: 6000
     - !type:DepartmentTimeRequirement
       department: Medical
-      time: 54000
+      time: 15000
   weight: 10
   startingGear: CMOGear
   icon: "ChiefMedicalOfficer"
