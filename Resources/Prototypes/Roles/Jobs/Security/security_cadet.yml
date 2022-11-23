@@ -4,10 +4,10 @@
   playTimeTracker: JobSecurityCadet
   requirements:
     - !type:OverallPlaytimeRequirement
-      time: 18000
+      time: 9000
     - !type:DepartmentTimeRequirement
       department: Security
-      time: 36000
+      time: 18000
       inverted: true # stop playing intern if you're good at security!
   startingGear: SecurityCadetGear
   icon: "SecurityCadet"
