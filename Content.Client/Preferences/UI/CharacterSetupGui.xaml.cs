@@ -23,8 +23,6 @@ using Robust.Shared.Map;
 using Robust.Shared.Maths;
 using Robust.Shared.Prototypes;
 using static Robust.Client.UserInterface.Controls.BoxContainer;
-using Content.Client.Stylesheets;
-
 
 namespace Content.Client.Preferences.UI
 {
@@ -211,19 +209,7 @@ namespace Content.Client.Preferences.UI
                     Text = Loc.GetString("character-setup-gui-character-picker-button-delete-button"),
                     Visible = !isSelectedCharacter,
                 };
-                var confirmDeleteButton = new Button
-                {
-                    Text = Loc.GetString("character-setup-gui-character-picker-button-confirm-deletion-button"),
-                    Visible = false,
-                };
-                confirmDeleteButton.ModulateSelfOverride = StyleNano.ButtonColorCautionDefault;
                 deleteButton.OnPressed += _ =>
-                {
-
-                    deleteButton.Visible = false;
-                    confirmDeleteButton.Visible = true;
-
-                };
                 {
                     Parent?.RemoveChild(this);
                     preferencesManager.DeleteCharacter(profile);
@@ -238,8 +224,7 @@ namespace Content.Client.Preferences.UI
                     {
                         view,
                         descriptionLabel,
-                        deleteButton,
-                        confirmDeleteButton
+                        deleteButton
                     }
                 };
 
