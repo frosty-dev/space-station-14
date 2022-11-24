@@ -22,7 +22,6 @@
         Musician: [ 1, 2 ]
         ServiceWorker: [ 2, 2 ]
         Captain: [ 1, 1 ]
-        IAA: [ 1, 1 ]
         HeadOfPersonnel: [ 1, 1 ]
         ChiefEngineer: [ 1, 1 ]
         StationEngineer: [ 6, 10 ]

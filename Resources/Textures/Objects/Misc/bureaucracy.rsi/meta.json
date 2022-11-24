@@ -1,7 +1,7 @@
 {
   "version": 1,
   "license": "CC-BY-SA-3.0",
-  "copyright": "Taken from tgstation at https://github.com/tgstation/tgstation/commit/e05699709338e30ecde1bcd8f61d559ed2d7798e. stamp-warden is modified version of stamp-hos. stamp-iaa is modified version of stamp-approve.",
+  "copyright": "Taken from tgstation at https://github.com/tgstation/tgstation/commit/e05699709338e30ecde1bcd8f61d559ed2d7798e. stamp-warden is modified version of stamp-hos.",
   "size": {
     "x": 32,
     "y": 32
@@ -136,9 +136,6 @@
       "name": "paper_stamp-hos"
     },
     {
-      "name": "paper_stamp-iaa"
-    },
-    {
       "name": "paper_stamp-mime"
     },
     {
@@ -265,9 +262,6 @@
     },
     {
       "name": "stamp-hos"
-    },
-    {
-      "name": "stamp-iaa"
     },
     {
       "name": "stamp-mime"
