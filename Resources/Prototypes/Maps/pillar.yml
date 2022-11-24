@@ -40,7 +40,7 @@
         SecurityCadet: [ 2, 2 ]
         Chaplain: [ 1, 1 ]
         Librarian: [ 1, 1 ]
-        Lawyer: [ 0, 0 ]
+        Lawyer: [ 2, 2 ]
         Quartermaster: [ 1, 1 ]
         CargoTechnician: [ 4, 6 ]
         SalvageSpecialist: [ 4, 6 ]
