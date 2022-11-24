@@ -1,23 +1,24 @@
 using Content.Server.Body.Components;
 using Content.Server.Chemistry.Components;
 using Content.Server.Chemistry.Components.SolutionManager;
-using Content.Server.CombatMode;
 using Content.Server.DoAfter;
 using Content.Shared.Chemistry.Components;
 using Content.Shared.Chemistry.Reagent;
 using Content.Shared.Database;
+using Content.Shared.DoAfter;
 using Content.Shared.FixedPoint;
 using Content.Shared.Hands;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
 using Content.Shared.MobState.Components;
-using Robust.Shared.GameStates;
-using Robust.Shared.Player;
-using System.Threading;
+using Content.Shared.Popups;
 using Content.Shared.Verbs;
 using Robust.Server.GameObjects;
-using Content.Shared.Popups;
+using Robust.Shared.GameStates;
+using Robust.Shared.Player;
+using System.Linq;
+using System.Threading;
 
 namespace Content.Server.Chemistry.EntitySystems;
 
@@ -27,7 +28,7 @@ public sealed partial class ChemistrySystem
     /// <summary>
     ///     Default transfer amounts for the set-transfer verb.
     /// </summary>
-    public static readonly List<int> TransferAmounts = new() {1, 5, 10, 15};
+    public static readonly List<int> TransferAmounts = new() { 1, 5, 10, 15 };
     private void InitializeInjector()
     {
         SubscribeLocalEvent<InjectorComponent, GetVerbsEvent<AlternativeVerb>>(AddSetTransferVerbs);
@@ -54,7 +55,7 @@ public sealed partial class ChemistrySystem
         var priority = 0;
         foreach (var amount in TransferAmounts)
         {
-            if ( amount < component.MinimumTransferAmount.Int() || amount > component.MaximumTransferAmount.Int())
+            if (amount < component.MinimumTransferAmount.Int() || amount > component.MaximumTransferAmount.Int())
                 continue;
 
             AlternativeVerb verb = new();
@@ -155,12 +156,13 @@ public sealed partial class ChemistrySystem
     {
         if (args.Handled || !args.CanReach)
             return;
-
+        /*
         if (component.CancelToken != null)
         {
             args.Handled = true;
             return;
         }
+        */
 
         //Make sure we have the attacking entity
         if (args.Target is not { Valid: true } target ||
@@ -234,6 +236,26 @@ public sealed partial class ChemistrySystem
     /// </summary>
     private void InjectDoAfter(InjectorComponent component, EntityUid user, EntityUid target)
     {
+        if (component.CancelToken != null)
+        {
+            var existingDoAfter = _doAfter.GetDoAfter(user, component.CancelToken.Token, target);
+            if (existingDoAfter != null)
+            {
+                var progress = existingDoAfter.Elapsed / existingDoAfter.EventArgs.Delay;
+                var score = existingDoAfter.EventArgs.QTEs.Max(x => x.InRange(progress));
+                if (score == 2)
+                {
+                    _popup.PopupEntity("Вы победили", target, Filter.Entities(user));
+                    existingDoAfter.Finish();
+                }
+                else if (score == 1)
+                    existingDoAfter.Finish();
+                else
+                    existingDoAfter.Cancel();
+            }
+            return;
+        }
+
         // Create a pop-up for the user
         _popup.PopupEntity(Loc.GetString("injector-component-injecting-user"), target, Filter.Entities(user));
 
@@ -283,7 +305,7 @@ public sealed partial class ChemistrySystem
 
         component.CancelToken = new CancellationTokenSource();
 
-        _doAfter.DoAfter(new DoAfterEventArgs(user, actualDelay, component.CancelToken.Token, target)
+        _doAfter.DoAfter(new DoAfterQTEEventArgs(user, actualDelay, new[] { new QTEWindow(0.65f, 0.85f, 0.82f) }, component.CancelToken.Token, target)
         {
             BreakOnUserMove = true,
             BreakOnDamage = true,

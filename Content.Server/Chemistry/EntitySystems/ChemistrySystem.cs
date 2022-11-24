@@ -15,7 +15,7 @@ public sealed partial class ChemistrySystem : EntitySystem
     [Dependency] private readonly IEntityManager _entMan = default!;
     [Dependency] private readonly InteractionSystem _interaction = default!;
     [Dependency] private readonly BloodstreamSystem _blood = default!;
-    [Dependency] private readonly DoAfterSystem _doAfter = default!;
+    [Dependency] private readonly DoAfterQTESystem _doAfter = default!;
     [Dependency] private readonly PopupSystem _popup = default!;
     [Dependency] private readonly ReactiveSystem _reactiveSystem = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
