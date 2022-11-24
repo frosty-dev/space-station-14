@@ -21,5 +21,3 @@ Main changes of this downstream:
 - Station goals
 - Sponsor rewards
 - Increased role timers
-- Custom roles
-  * Internal affairs agent

@@ -30,7 +30,6 @@
   id: Command
   roles:
   - Captain
-  - IAA
   - CentralCommandOfficial
   - ChiefEngineer
   - ChiefMedicalOfficer
