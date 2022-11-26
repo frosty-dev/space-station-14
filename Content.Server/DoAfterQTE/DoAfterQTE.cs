@@ -18,6 +18,8 @@ namespace Content.Server.DoAfter
 
         public float Elapsed { get; set; }
 
+        public byte? QTEScore { get; set; }
+
         public EntityCoordinates UserGrid { get; }
 
         public EntityCoordinates TargetGrid { get; }

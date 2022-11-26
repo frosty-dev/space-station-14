@@ -1,4 +1,6 @@
 using Content.Shared.DoAfter;
+using Content.Shared.Interaction;
+using Content.Shared.Interaction.Events;
 using JetBrains.Annotations;
 using Robust.Client.Graphics;
 using Robust.Client.Player;
@@ -7,6 +9,8 @@ using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+using System;
+using System.Linq;
 
 namespace Content.Client.DoAfter
 {
@@ -30,13 +34,15 @@ namespace Content.Client.DoAfter
             base.Initialize();
             UpdatesOutsidePrediction = true;
             SubscribeNetworkEvent<CancelledDoAfterQTEMessage>(OnCancelledDoAfter);
-            SubscribeNetworkEvent<FinishedDoAfterQTEMessage>(OnFinishedDoAfter);
             SubscribeLocalEvent<DoAfterQTEComponent, ComponentHandleState>(OnDoAfterHandleState);
             IoCManager.Resolve<IOverlayManager>().AddOverlay(
                 new DoAfterQTEOverlay(
                     EntityManager,
                     IoCManager.Resolve<IPrototypeManager>(),
                     IoCManager.Resolve<IResourceCache>()));
+
+            //SubscribeLocalEvent<DoAfterQTEComponent, UseInHandEvent>((a,b,c) => OnTriggerEvent(a, b, c, QTETriggerEventTypes.UseInHand, c.User));
+            SubscribeLocalEvent<DoAfterQTEComponent, InteractUsingEvent>((a, b, c) => OnQTETriggerEvent(a, b, c, QTETriggerEventTypes.InteractUsing, c.User, c.Used, c.Target));
         }
 
         public override void Shutdown()
@@ -93,12 +99,30 @@ namespace Content.Client.DoAfter
             Cancel(doAfter, ev.ID);
         }
 
-        private void OnFinishedDoAfter(FinishedDoAfterQTEMessage ev)
+        private void OnQTETriggerEvent(EntityUid uid, DoAfterQTEComponent component, HandledEntityEventArgs eventHandled, QTETriggerEventTypes triggerType, EntityUid user, EntityUid? used = null, EntityUid? target = null)
         {
-            if (!TryComp<DoAfterQTEComponent>(ev.Uid, out var doAfter))
-                return;
+            foreach (var (k, v) in component.DoAfters)
+            {
+                if (v.QTEScore.HasValue)
+                    continue;
+                if (!v.QTETriggers.HasFlag(triggerType))
+                    continue;
+                if (triggerType == QTETriggerEventTypes.InteractUsing && target != v.Target)
+                    continue;
+                eventHandled.Handled = true;
+                TriggerQTE(component, v, k, v.Accumulator / v.Delay);
+            }
+        }
 
-            Finish(doAfter, ev.ID);
+        public void TriggerQTE(DoAfterQTEComponent component, ClientDoAfterQTE doAfter, byte id, float percentComplete)
+        {
+            var qteScore = doAfter.QTEs.Max(x => x.InRange(percentComplete));
+            doAfter.QTEScore = qteScore;
+
+            RaiseNetworkEvent(new TriggeredDoAfterQTEMessage(component.Owner, id, percentComplete));
+
+            if (qteScore > 0)
+                Remove(component, doAfter);
         }
 
         /// <summary>
@@ -131,12 +155,6 @@ namespace Content.Client.DoAfter
             var doAfterMessage = component.DoAfters[id];
             doAfterMessage.Cancelled = true;
             component.CancelledDoAfters.Add(id, doAfterMessage);
-        }
-
-        public void Finish(DoAfterQTEComponent component, byte id)
-        {
-            var doAfterMessage = component.DoAfters[id];
-            Remove(component, doAfterMessage);
         }
 
         // TODO separate DoAfter & ActiveDoAfter components for the entity query.

@@ -2,6 +2,7 @@ using System.Threading;
 using Content.Shared.DoAfter;
 using Content.Shared.FixedPoint;
 using Robust.Shared.Utility;
+using static Content.Shared.DoAfter.QTEWindow;
 
 namespace Content.Server.DoAfter
 {
@@ -18,6 +19,8 @@ namespace Content.Server.DoAfter
         public float Delay { get; }
 
         public QTEWindow[] QTEs { get; }
+
+        public QTETriggerEventTypes QTETriggers { get; }
 
         /// <summary>
         ///     Applicable target (if relevant)
@@ -126,6 +129,7 @@ namespace Content.Server.DoAfter
             EntityUid user,
             float delay,
             QTEWindow[] qtes,
+            QTETriggerEventTypes triggerEvents,
             CancellationToken cancelToken = default,
             EntityUid? target = null,
             EntityUid? used = null)
@@ -133,6 +137,7 @@ namespace Content.Server.DoAfter
             User = user;
             Delay = delay;
             QTEs = qtes;
+            QTETriggers = triggerEvents;
             CancelToken = cancelToken;
             Target = target;
             Used = used;

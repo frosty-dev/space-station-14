@@ -156,13 +156,12 @@ public sealed partial class ChemistrySystem
     {
         if (args.Handled || !args.CanReach)
             return;
-        /*
+
         if (component.CancelToken != null)
         {
             args.Handled = true;
             return;
         }
-        */
 
         //Make sure we have the attacking entity
         if (args.Target is not { Valid: true } target ||
@@ -236,26 +235,6 @@ public sealed partial class ChemistrySystem
     /// </summary>
     private void InjectDoAfter(InjectorComponent component, EntityUid user, EntityUid target)
     {
-        if (component.CancelToken != null)
-        {
-            var existingDoAfter = _doAfter.GetDoAfter(user, component.CancelToken.Token, target);
-            if (existingDoAfter != null)
-            {
-                var progress = existingDoAfter.Elapsed / existingDoAfter.EventArgs.Delay;
-                var score = existingDoAfter.EventArgs.QTEs.Max(x => x.InRange(progress));
-                if (score == 2)
-                {
-                    _popup.PopupEntity("Вы победили", target, Filter.Entities(user));
-                    existingDoAfter.Finish();
-                }
-                else if (score == 1)
-                    existingDoAfter.Finish();
-                else
-                    existingDoAfter.Cancel();
-            }
-            return;
-        }
-
         // Create a pop-up for the user
         _popup.PopupEntity(Loc.GetString("injector-component-injecting-user"), target, Filter.Entities(user));
 
@@ -305,7 +284,14 @@ public sealed partial class ChemistrySystem
 
         component.CancelToken = new CancellationTokenSource();
 
-        _doAfter.DoAfter(new DoAfterQTEEventArgs(user, actualDelay, new[] { new QTEWindow(0.65f, 0.85f, 0.82f) }, component.CancelToken.Token, target)
+        _doAfter.DoAfter(new DoAfterQTEEventArgs(
+            user,
+            actualDelay,
+            new[] { new QTEWindow(0.65f, 0.8f, 0.78f) },
+            QTETriggerEventTypes.InteractUsing,
+            component.CancelToken.Token,
+            target
+            )
         {
             BreakOnUserMove = true,
             BreakOnDamage = true,

@@ -22,6 +22,36 @@ namespace Content.Server.DoAfter
             SubscribeLocalEvent<DoAfterQTEComponent, DamageChangedEvent>(OnDamage);
             SubscribeLocalEvent<DoAfterQTEComponent, MobStateChangedEvent>(OnStateChanged);
             SubscribeLocalEvent<DoAfterQTEComponent, ComponentGetState>(OnDoAfterGetState);
+            SubscribeNetworkEvent<TriggeredDoAfterQTEMessage>(OnTriggeredDoAfter);
+        }
+
+        private void OnTriggeredDoAfter(TriggeredDoAfterQTEMessage msg)
+        {
+            var component = EntityManager.GetComponent<DoAfterQTEComponent>(msg.Uid);
+
+            DoAfterQTE? doAfter = null;
+            foreach (var (k, v) in component.DoAfters)
+            {
+                if (v == msg.ID)
+                {
+                    if(k.QTEScore == null)
+                        doAfter = k;
+                    break;
+                }
+            }
+            if (doAfter == null)
+                return;
+            Triggered(component, doAfter, msg.PercentComplete);
+        }
+
+        private void Triggered(DoAfterQTEComponent component, DoAfterQTE doAfter, float percentComplete)
+        {
+            var qtes = doAfter.EventArgs.QTEs;
+            var qteScore = qtes.Max(x => x.InRange(percentComplete));
+            doAfter.QTEScore = qteScore;
+
+            if (qteScore > 0)
+                doAfter.Finish();
         }
 
         public void Add(DoAfterQTEComponent component, DoAfterQTE doAfter)
@@ -61,8 +91,6 @@ namespace Content.Server.DoAfter
             {
                 RemComp<ActiveDoAfterQTEComponent>(component.Owner);
             }
-
-            RaiseNetworkEvent(new FinishedDoAfterQTEMessage(component.Owner, index));
         }
 
         private void OnDoAfterGetState(EntityUid uid, DoAfterQTEComponent component, ref ComponentGetState args)
@@ -79,6 +107,7 @@ namespace Content.Server.DoAfter
                     doAfter.StartTime,
                     doAfter.EventArgs.Delay,
                     doAfter.EventArgs.QTEs,
+                    doAfter.EventArgs.QTETriggers,
                     doAfter.EventArgs.BreakOnUserMove,
                     doAfter.EventArgs.BreakOnTargetMove,
                     doAfter.EventArgs.MovementThreshold,
@@ -208,20 +237,6 @@ namespace Content.Server.DoAfter
         public void DoAfter(DoAfterQTEEventArgs eventArgs)
         {
             CreateDoAfter(eventArgs);
-        }
-
-        public DoAfterQTE? GetDoAfter(EntityUid user, CancellationToken cancelToken, EntityUid? target = null, EntityUid? used = null)
-        {
-            foreach (var (_, comp) in EntityManager.EntityQuery<ActiveDoAfterQTEComponent, DoAfterQTEComponent>())
-                foreach (var (doAfter, _) in comp.DoAfters.ToArray())
-                    if (
-                        doAfter.EventArgs.User == user
-                        && doAfter.EventArgs.CancelToken == cancelToken
-                        && doAfter.EventArgs.Target == target
-                        && doAfter.EventArgs.Used == used
-                        )
-                        return doAfter;
-            return null;
         }
 
         private DoAfterQTE CreateDoAfter(DoAfterQTEEventArgs eventArgs)

@@ -35,15 +35,16 @@ namespace Content.Shared.DoAfter
     }
 
     [Serializable, NetSerializable]
-    public sealed class FinishedDoAfterQTEMessage : EntityEventArgs
+    public sealed class TriggeredDoAfterQTEMessage : EntityEventArgs
     {
         public EntityUid Uid;
         public byte ID { get; }
+        public float PercentComplete { get; }
 
-        public FinishedDoAfterQTEMessage(EntityUid uid, byte id)
+        public TriggeredDoAfterQTEMessage(EntityUid uid, byte id, float percentComplete)
         {
             Uid = uid;
-            ID = id;
+            PercentComplete = percentComplete;
         }
     }
 
@@ -55,6 +56,9 @@ namespace Content.Shared.DoAfter
     public sealed class ClientDoAfterQTE
     {
         public bool Cancelled = false;
+
+        [NonSerialized]
+        public byte? QTEScore;
 
         /// <summary>
         /// Accrued time when cancelled.
@@ -78,6 +82,8 @@ namespace Content.Shared.DoAfter
 
         public QTEWindow[] QTEs { get; }
 
+        public QTETriggerEventTypes QTETriggers { get; }
+
         // TODO: The other ones need predicting
         public bool BreakOnUserMove { get; }
 
@@ -88,7 +94,7 @@ namespace Content.Shared.DoAfter
         public FixedPoint2 DamageThreshold { get; }
 
         public ClientDoAfterQTE(byte id, EntityCoordinates userGrid, EntityCoordinates targetGrid, TimeSpan startTime,
-            float delay, QTEWindow[] qtes, bool breakOnUserMove, bool breakOnTargetMove, float movementThreshold, FixedPoint2 damageThreshold, EntityUid? target = null)
+            float delay, QTEWindow[] qtes, QTETriggerEventTypes triggers, bool breakOnUserMove, bool breakOnTargetMove, float movementThreshold, FixedPoint2 damageThreshold, EntityUid? target = null)
         {
             ID = id;
             UserGrid = userGrid;
@@ -96,6 +102,7 @@ namespace Content.Shared.DoAfter
             StartTime = startTime;
             Delay = delay;
             QTEs = qtes;
+            QTETriggers = triggers;
             BreakOnUserMove = breakOnUserMove;
             BreakOnTargetMove = breakOnTargetMove;
             MovementThreshold = movementThreshold;
@@ -126,7 +133,7 @@ namespace Content.Shared.DoAfter
         /// 1 - попадает
         /// 2 - попадает в зону приколов
         /// </summary>
-        public int InRange(float percentComplete)
+        public byte InRange(float percentComplete)
         {
             if(percentComplete > End)
                 return 0;
@@ -136,7 +143,12 @@ namespace Content.Shared.DoAfter
                 return 1;
             return 0;
         }
-
     }
 
+    [Flags]
+    public enum QTETriggerEventTypes : byte
+    {
+        UseInHand = 0,
+        InteractUsing = 1 << 0,
+    }
 }

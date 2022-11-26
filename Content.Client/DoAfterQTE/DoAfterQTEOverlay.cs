@@ -87,6 +87,7 @@ public sealed class DoAfterQTEOverlay : Overlay
 
                 // Draw the bar itself
                 var cancelled = doAfter.Cancelled;
+                var qteFailed = doAfter.QTEScore == 0;
                 Color color;
                 const float flashTime = 0.125f;
 
@@ -95,6 +96,10 @@ public sealed class DoAfterQTEOverlay : Overlay
                 {
                     var flash = Math.Floor(doAfter.CancelledAccumulator / flashTime) % 2 == 0;
                     color = new Color(1f, 0f, 0f, flash ? 1f : 0f);
+                }
+                else if (qteFailed)
+                {
+                    color = new Color(0.6f, 0f, 0f, 1f);
                 }
                 else
                 {
@@ -106,18 +111,21 @@ public sealed class DoAfterQTEOverlay : Overlay
                 const float endX = 22f;
                 const float lengthX = endX - startX;
 
-                foreach (var window in doAfter.QTEs)
+                if(!qteFailed)
                 {
-                    var qteBox = new Box2(new Vector2(startX + lengthX * window.Start, 3f) / EyeManager.PixelsPerMeter,
-                        new Vector2(startX + lengthX * window.End, 4f) / EyeManager.PixelsPerMeter);
-                    qteBox = qteBox.Translated(position);
-                    handle.DrawRect(qteBox, new Color(1f, 1f, 1f, 0.3f));
-                    if(window.PerfectStart.HasValue)
+                    foreach (var window in doAfter.QTEs)
                     {
-                        var qteBoxPerfect = new Box2(new Vector2(startX + lengthX * (float)window.PerfectStart, 3f) / EyeManager.PixelsPerMeter,
+                        var qteBox = new Box2(new Vector2(startX + lengthX * window.Start, 3f) / EyeManager.PixelsPerMeter,
                             new Vector2(startX + lengthX * window.End, 4f) / EyeManager.PixelsPerMeter);
-                        qteBoxPerfect = qteBoxPerfect.Translated(position);
-                        handle.DrawRect(qteBoxPerfect, new Color(1f, 1f, 1f, 0.3f));
+                        qteBox = qteBox.Translated(position);
+                        handle.DrawRect(qteBox, new Color(1f, 1f, 1f, 0.3f));
+                        if (window.PerfectStart.HasValue)
+                        {
+                            var qteBoxPerfect = new Box2(new Vector2(startX + lengthX * (float) window.PerfectStart, 3f) / EyeManager.PixelsPerMeter,
+                                new Vector2(startX + lengthX * window.End, 4f) / EyeManager.PixelsPerMeter);
+                            qteBoxPerfect = qteBoxPerfect.Translated(position);
+                            handle.DrawRect(qteBoxPerfect, new Color(1f, 1f, 1f, 0.3f));
+                        }
                     }
                 }
 
