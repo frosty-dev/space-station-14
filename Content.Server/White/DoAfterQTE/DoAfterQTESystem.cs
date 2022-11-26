@@ -243,8 +243,8 @@ namespace Content.Server.DoAfter
         {
             // Setup
             var doAfter = new DoAfterQTE(eventArgs, EntityManager);
-            // Caller's gonna be responsible for this I guess //нет
-            var doAfterComponent = EnsureComp<DoAfterQTEComponent>(eventArgs.User);
+            // Caller's gonna be responsible for this I guess
+            var doAfterComponent = Comp<DoAfterQTEComponent>(eventArgs.User);
             Add(doAfterComponent, doAfter);
             return doAfter;
         }

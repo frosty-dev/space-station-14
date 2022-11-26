@@ -11,6 +11,7 @@ using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 using System;
 using System.Linq;
+using TerraFX.Interop.Windows;
 
 namespace Content.Client.DoAfter
 {
@@ -101,7 +102,9 @@ namespace Content.Client.DoAfter
 
         private void OnQTETriggerEvent(EntityUid uid, DoAfterQTEComponent component, HandledEntityEventArgs eventHandled, QTETriggerEventTypes triggerType, EntityUid user, EntityUid? used = null, EntityUid? target = null)
         {
-            foreach (var (k, v) in component.DoAfters)
+            if (!EntityManager.TryGetComponent<DoAfterQTEComponent>(user, out var userComponent))
+                return;
+            foreach (var (k, v) in userComponent.DoAfters)
             {
                 if (v.QTEScore.HasValue)
                     continue;
@@ -110,7 +113,7 @@ namespace Content.Client.DoAfter
                 if (triggerType == QTETriggerEventTypes.InteractUsing && target != v.Target)
                     continue;
                 eventHandled.Handled = true;
-                TriggerQTE(component, v, k, v.Accumulator / v.Delay);
+                TriggerQTE(userComponent, v, k, v.Accumulator / v.Delay);
             }
         }
 
