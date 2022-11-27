@@ -18,13 +18,17 @@ namespace Content.Client.TextScreen
         /// </summary>
         private static readonly Dictionary<char, string> CharStatePairs = new()
             {
+                { 'ё', "е" },
                 { ':', "colon" },
                 { '!', "exclamation" },
                 { '?', "question" },
                 { '*', "star" },
                 { '+', "plus" },
                 { '-', "dash" },
-                { ' ', "blank" }
+                { ' ', "blank" },
+                { '.', "point" },
+                { '/', "line" },
+                { ',', "comma" }
             };
 
         private const string DefaultState = "blank";
@@ -156,7 +160,7 @@ namespace Content.Client.TextScreen
                 UpdateText(component);
             }
 
-            UpdateText(component);
+            PrepareLayerStatesToDraw(component);
             UpdateLayersToDraw(component, sprite);
         }
 
