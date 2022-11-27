@@ -7,6 +7,9 @@ using Content.Shared.MachineLinking;
 using Content.Server.UserInterface;
 using Content.Shared.Access.Systems;
 using Content.Server.Interaction;
+using Content.Server.Radio.EntitySystems;
+using Content.Shared.Radio;
+using Robust.Shared.Prototypes;
 
 namespace Content.Server.MachineLinking.System
 {
@@ -19,6 +22,8 @@ namespace Content.Server.MachineLinking.System
         [Dependency] private readonly UserInterfaceSystem _ui = default!;
         [Dependency] private readonly AccessReaderSystem _accessReader = default!;
         [Dependency] private readonly InteractionSystem _interaction = default!;
+        [Dependency] private readonly RadioSystem _radioSystem = default!;
+        [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
 
         public override void Initialize()
         {
@@ -30,6 +35,14 @@ namespace Content.Server.MachineLinking.System
             SubscribeLocalEvent<SignalTimerComponent, SignalTimerTextChangedMessage>(OnTextChangedMessage);
             SubscribeLocalEvent<SignalTimerComponent, SignalTimerDelayChangedMessage>(OnDelayChangedMessage);
             SubscribeLocalEvent<SignalTimerComponent, SignalTimerStartMessage>(OnTimerStartMessage);
+        }
+
+
+        private void Report(EntityUid source, string channelName, string messageKey, params (string, object)[] args)
+        {
+            var message = args.Length == 0 ? Loc.GetString(messageKey) : Loc.GetString(messageKey, args);
+            var channel = _prototypeManager.Index<RadioChannelPrototype>(channelName);
+            _radioSystem.SendRadioMessage(source, message, channel);
         }
 
         private void OnInit(EntityUid uid, SignalTimerComponent component, ComponentInit args)
@@ -65,6 +78,7 @@ namespace Content.Server.MachineLinking.System
 
             _signalSystem.InvokePort(uid, signalTimer.TriggerPort);
 
+            Report(uid, SignalTimerComponent.SecChannel, "timer-end-announcement", ("Label", signalTimer.Label));
             _appearanceSystem.SetData(uid, TextScreenVisuals.Mode, TextScreenMode.Text);
 
             if (_ui.TryGetUi(uid, SignalTimerUiKey.Key, out var bui))
@@ -155,6 +169,7 @@ namespace Content.Server.MachineLinking.System
                 _appearanceSystem.SetData(uid, TextScreenVisuals.ScreenText, component.Label);
 
                 _signalSystem.InvokePort(uid, component.StartPort);
+                Report(uid, SignalTimerComponent.SecChannel, "timer-start-announcement", ("Label", component.Label));
             }
             else
             {

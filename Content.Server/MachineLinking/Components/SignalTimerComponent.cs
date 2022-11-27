@@ -1,4 +1,5 @@
 ﻿using Content.Shared.MachineLinking;
+using Content.Shared.Radio;
 using Robust.Shared.Audio;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
@@ -36,6 +37,9 @@ namespace Content.Server.MachineLinking.Components
         /// </summary>
         [DataField("startPort", customTypeSerializer: typeof(PrototypeIdSerializer<TransmitterPortPrototype>))]
         public string StartPort = "Start";
+
+        [DataField("SecChannel", customTypeSerializer: typeof(PrototypeIdSerializer<RadioChannelPrototype>))]
+        public static string SecChannel = "Security";
 
         /// <summary>
         ///     this timer will play this sound when ends.
