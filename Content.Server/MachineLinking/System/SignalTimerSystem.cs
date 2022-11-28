@@ -78,7 +78,10 @@ namespace Content.Server.MachineLinking.System
 
             _signalSystem.InvokePort(uid, signalTimer.TriggerPort);
 
-            Report(uid, SignalTimerComponent.SecChannel, "timer-end-announcement", ("Label", signalTimer.Label));
+            var announceMessage = signalTimer.Label;
+            if (string.IsNullOrWhiteSpace(announceMessage)) { announceMessage = Loc.GetString("label-none");}
+
+            Report(uid, SignalTimerComponent.SecChannel, "timer-end-announcement", ("Label", announceMessage));
             _appearanceSystem.SetData(uid, TextScreenVisuals.Mode, TextScreenMode.Text);
 
             if (_ui.TryGetUi(uid, SignalTimerUiKey.Key, out var bui))
@@ -169,12 +172,16 @@ namespace Content.Server.MachineLinking.System
                 _appearanceSystem.SetData(uid, TextScreenVisuals.ScreenText, component.Label);
 
                 _signalSystem.InvokePort(uid, component.StartPort);
-                Report(uid, SignalTimerComponent.SecChannel, "timer-start-announcement", ("Label", component.Label));
+
+                var announceMessage = component.Label;
+                if (string.IsNullOrWhiteSpace(announceMessage)) { announceMessage = Loc.GetString("label-none");}
+
+                Report(uid, SignalTimerComponent.SecChannel, "timer-start-announcement", ("Label", announceMessage));
             }
             else
             {
                 component.User = args.User;
-                RemComp<ActiveSignalTimerComponent>(uid);
+                HasComp<ActiveSignalTimerComponent>(uid);
 
                 _appearanceSystem.SetData(uid, TextScreenVisuals.Mode, TextScreenMode.Text);
                 _appearanceSystem.SetData(uid, TextScreenVisuals.ScreenText, component.Label);

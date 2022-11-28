@@ -24,7 +24,8 @@ namespace Content.Server.MachineLinking.Components
         /// <summary>
         ///     The label, used for TextScreen visuals currently.
         /// </summary>
-        [DataField("label")] public string Label = "";
+        [DataField("label")]
+        public string Label = "";
 
         /// <summary>
         ///     port that gets signaled when the timer triggers, so something happens!
