@@ -469,3 +469,17 @@
     sprite: Clothing/Head/Hardsuits/ERThelmets/ertjanitor.rsi
   - type: Clothing
     sprite: Clothing/Head/Hardsuits/ERThelmets/ertjanitor.rsi
+
+- type: entity
+  parent: ClothingHeadHardsuitBase
+  id: ClothingHeadHelmetHardsuitEVAPrisoner
+  noSpawn: true
+  name: Prisoner EVA HardSuit Helmet.
+  components:
+    - type: Sprite
+      sprite: Clothing/Head/Hardsuits/evaprisoner.rsi
+    - type: Clothing
+      sprite: Clothing/Head/Hardsuits/evaprisoner.rsi
+    - type: PressureProtection
+      highPressureMultiplier: 0.1
+      lowPressureMultiplier: 1000
