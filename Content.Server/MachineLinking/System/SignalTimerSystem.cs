@@ -81,7 +81,10 @@ namespace Content.Server.MachineLinking.System
             var announceMessage = signalTimer.Label;
             if (string.IsNullOrWhiteSpace(announceMessage)) { announceMessage = Loc.GetString("label-none");}
 
-            Report(uid, SignalTimerComponent.SecChannel, "timer-end-announcement", ("Label", announceMessage));
+            if (signalTimer.TimerCanAnnounce)
+            {
+                Report(uid, SignalTimerComponent.SecChannel, "timer-end-announcement", ("Label", announceMessage));
+            }
             _appearanceSystem.SetData(uid, TextScreenVisuals.Mode, TextScreenMode.Text);
 
             if (_ui.TryGetUi(uid, SignalTimerUiKey.Key, out var bui))
@@ -176,15 +179,32 @@ namespace Content.Server.MachineLinking.System
                 var announceMessage = component.Label;
                 if (string.IsNullOrWhiteSpace(announceMessage)) { announceMessage = Loc.GetString("label-none");}
 
-                Report(uid, SignalTimerComponent.SecChannel, "timer-start-announcement", ("Label", announceMessage));
+                //sorry, skill issue
+                var time = TimeSpan.FromSeconds(component.Delay);
+                var timeFormatted = string.Format("{0}{1}{2}",
+                    time.Duration().Hours > 0 ? $"{time.Hours:0} час;{(time.Hours == 1 ? string.Empty : "ов")} " : string.Empty,
+                    time.Duration().Minutes > 0 ? $"{time.Minutes:0} минут;{(time.Minutes != 1 ? string.Empty : "а")} " : string.Empty,
+                    time.Duration().Seconds > 0 ? $"{time.Seconds:0} секунд{(time.Seconds != 1 ? string.Empty : "а")} " : string.Empty);
+                if (component.TimerCanAnnounce)
+                {
+                    Report(uid, SignalTimerComponent.SecChannel, "timer-start-announcement", ("Label", announceMessage), ("Time", timeFormatted));
+                }
             }
             else
             {
                 component.User = args.User;
-                HasComp<ActiveSignalTimerComponent>(uid);
+                RemComp<ActiveSignalTimerComponent>(uid);
 
                 _appearanceSystem.SetData(uid, TextScreenVisuals.Mode, TextScreenMode.Text);
                 _appearanceSystem.SetData(uid, TextScreenVisuals.ScreenText, component.Label);
+
+                var announceMessage = component.Label;
+                if (string.IsNullOrWhiteSpace(announceMessage)) { announceMessage = Loc.GetString("label-none");}
+
+                if (component.TimerCanAnnounce)
+                {
+                    Report(uid, SignalTimerComponent.SecChannel, "timer-suffer-end", ("Label", announceMessage));
+                }
             }
         }
     }

@@ -39,6 +39,7 @@
   components:
     - type: SignalTimer
       canEditLabel: true
+      timerCanAnnounce: false
     - type: TextScreenVisuals
     - type: Sprite
       sprite: Structures/Wallmounts/textscreen.rsi
@@ -47,9 +48,17 @@
 
 - type: entity
   id: BrigTimer
-  parent: ScreenTimer
+  parent: SignalTimer
   name: brig timer
   description: It's a timer for brig cells.
   components:
+    - type: SignalTimer
+      canEditLabel: true
+      timerCanAnnounce: true
+    - type: TextScreenVisuals
+    - type: Sprite
+      sprite: Structures/Wallmounts/textscreen.rsi
+      state: textscreen
+      noRot: true
     - type: AccessReader
       access: [["Brig"]]

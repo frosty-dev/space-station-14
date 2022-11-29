@@ -21,6 +21,10 @@ namespace Content.Server.MachineLinking.Components
         [ViewVariables(VVAccess.ReadWrite)]
         public bool CanEditLabel = true;
 
+        [DataField("timerCanAnnounce")]
+        [ViewVariables(VVAccess.ReadWrite)]
+        public bool TimerCanAnnounce = false;
+
         /// <summary>
         ///     The label, used for TextScreen visuals currently.
         /// </summary>
