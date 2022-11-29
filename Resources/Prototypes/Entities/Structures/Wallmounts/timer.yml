@@ -11,6 +11,8 @@
       arc: 360
     - type: Clickable
     - type: InteractionOutline
+    - type: Physics
+      canCollide: false
     - type: Sprite
       sprite: Structures/Wallmounts/switch.rsi
       netsync: false
@@ -34,7 +36,7 @@
 - type: entity
   id: ScreenTimer
   parent: SignalTimer
-  name: screen timer
+  name: цифровой таймер
   description: It's a timer for sending signals to things, with a built-in screen.
   components:
     - type: SignalTimer
@@ -49,7 +51,7 @@
 - type: entity
   id: BrigTimer
   parent: SignalTimer
-  name: brig timer
+  name: камерный таймер
   description: It's a timer for brig cells.
   components:
     - type: SignalTimer
