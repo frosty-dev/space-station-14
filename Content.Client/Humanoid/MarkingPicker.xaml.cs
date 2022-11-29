@@ -8,7 +8,6 @@ using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
 using Robust.Client.UserInterface.XAML;
 using Robust.Client.Utility;
-using Robust.Shared.Network;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 using static Robust.Client.UserInterface.Controls.BoxContainer;
@@ -20,7 +19,7 @@ public sealed partial class MarkingPicker : Control
 {
     [Dependency] private readonly MarkingManager _markingManager = default!;
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
-    [Dependency] private readonly SponsorsManager _sponsorsManager = default!; // Corvax-Sponsors
+    [Dependency] private readonly ClientSponsorsManager _sponsorsManager = default!; // Corvax-Sponsors
 
     public Action<MarkingSet>? OnMarkingAdded;
     public Action<MarkingSet>? OnMarkingRemoved;
@@ -189,16 +188,7 @@ public sealed partial class MarkingPicker : Control
 
             var item = CMarkingsUnused.AddItem($"{GetMarkingName(marking)}", marking.Sprites[0].Frame0());
             item.Metadata = marking;
-            // Corvax-Sponsors-Start
-            if (marking.SponsorOnly)
-            {
-                item.Disabled = true;
-                if (_sponsorsManager.TryGetInfo(out var sponsor))
-                {
-                    item.Disabled = !sponsor.AllowedMarkings.Contains(marking.ID);
-                }
-            }
-            // Corvax-Sponsors-End
+            item.Disabled = marking.SponsorOnly && !_sponsorsManager.AllowedNeko; // Corvax-Sponsors
         }
 
         CMarkingPoints.Visible = _currentMarkings.PointsLeft(_selectedMarkingCategory) != -1;
