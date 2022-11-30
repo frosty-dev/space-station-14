@@ -83,3 +83,11 @@ Entries:
     type: Tweak
   id: 11
   time: '2022-11-30T06:05:17.0000000+00:00'
+- author: rhailrake
+  changes:
+  - message: TextScreen
+    type: Add
+  - message: ScreenTimers
+    type: Add
+  id: 12
+  time: '2022-11-30T06:06:56.0000000+00:00'
