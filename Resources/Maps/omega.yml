@@ -98,7 +98,7 @@ entities:
   components:
   - type: MetaData
   - pos: 2.2710133,-2.4148211
-    parent: null
+    parent: 473
     type: Transform
   - chunks:
       -1,0:
@@ -12624,8 +12624,8 @@ entities:
     - volume: 2500
       temperature: 293.15
       moles:
-      - 18.935778
-      - 71.2346
+      - 18.405577
+      - 69.24003
       - 0
       - 0
       - 0
@@ -12654,8 +12654,8 @@ entities:
     - volume: 2500
       temperature: 235
       moles:
-      - 18.935778
-      - 71.2346
+      - 18.405577
+      - 69.24003
       - 0
       - 0
       - 0
@@ -12699,8 +12699,8 @@ entities:
     - volume: 2500
       temperature: 293.15
       moles:
-      - 16.429127
-      - 61.804813
+      - 15.521976
+      - 58.3922
       - 0
       - 0
       - 0
@@ -16061,6 +16061,15 @@ entities:
     type: Transform
   - color: '#FF1212FF'
     type: AtmosPipeColor
+- uid: 473
+  components:
+  - type: MetaData
+  - type: Transform
+  - index: 12
+    type: Map
+  - type: PhysicsMap
+  - type: Broadphase
+  - type: OccluderTree
 - uid: 474
   type: GasPipeStraight
   components:
@@ -65759,6 +65768,18 @@ entities:
     pos: -27.5,16.5
     parent: 0
     type: Transform
+  - inputs:
+      Open:
+      - port: Timer
+        uid: 12390
+      Close:
+      - port: Start
+        uid: 12390
+      Toggle: []
+      AutoClose:
+      - port: Timer
+        uid: 12390
+    type: SignalReceiver
 - uid: 7786
   type: WindoorSecurityLocked
   components:
@@ -65766,6 +65787,18 @@ entities:
     pos: -27.5,19.5
     parent: 0
     type: Transform
+  - inputs:
+      Open:
+      - port: Timer
+        uid: 12391
+      Close:
+      - port: Start
+        uid: 12391
+      Toggle: []
+      AutoClose:
+      - port: Timer
+        uid: 12391
+    type: SignalReceiver
 - uid: 7787
   type: TableReinforced
   components:
@@ -96826,4 +96859,36 @@ entities:
   - pos: 22.5,-29.5
     parent: 0
     type: Transform
+- uid: 12390
+  type: BrigTimer
+  components:
+  - pos: -27.5,17.5
+    parent: 0
+    type: Transform
+  - outputs:
+      Start:
+      - port: Close
+        uid: 7785
+      Timer:
+      - port: AutoClose
+        uid: 7785
+      - port: Open
+        uid: 7785
+    type: SignalTransmitter
+- uid: 12391
+  type: BrigTimer
+  components:
+  - pos: -27.5,20.5
+    parent: 0
+    type: Transform
+  - outputs:
+      Start:
+      - port: Close
+        uid: 7786
+      Timer:
+      - port: AutoClose
+        uid: 7786
+      - port: Open
+        uid: 7786
+    type: SignalTransmitter
 ...
