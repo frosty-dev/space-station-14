@@ -35,6 +35,20 @@ public sealed class TrailData
     public Vector2 KostilOffset0 { get => PointOffset[0]; set => PointOffset[0] = value; }
     [ViewVariables(VVAccess.ReadWrite)]
     public Vector2 KostilOffset1 { get => PointOffset[1]; set => PointOffset[1] = value; }
+    [ViewVariables(VVAccess.ReadWrite)]
+    public string TexurePath { get; set; } = string.Empty;
+    [ViewVariables(VVAccess.ReadWrite)]
+    public TrailShaderSettings? ShaderSettings { get; set; }
+}
+
+public sealed class TrailShaderSettings
+{
+    [ViewVariables(VVAccess.ReadWrite)]
+    public string ShaderId { get; set; } = string.Empty;
+    [ViewVariables(VVAccess.ReadWrite)]
+    public bool EncodeFlowmapAsRG { get; set; } = false; //TODO: доделать когда надо будет
+    [ViewVariables(VVAccess.ReadWrite)]
+    public bool EncodeLifetimeAsB { get; set; } = false;
 }
 
 public sealed class TrailPoint
