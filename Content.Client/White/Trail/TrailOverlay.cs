@@ -14,8 +14,8 @@ public sealed class TrailOverlay : Overlay
     private readonly IPrototypeManager _protoManager;
     private readonly IResourceCache _cache;
 
-    private readonly Dictionary<string, ShaderInstance> _shaderDict;
-    private readonly Dictionary<string, Texture> _textureDict;
+    private readonly Dictionary<string, ShaderInstance?> _shaderDict;
+    private readonly Dictionary<string, Texture?> _textureDict;
 
     public override OverlaySpace Space => OverlaySpace.WorldSpaceEntities;
 
@@ -75,9 +75,9 @@ public sealed class TrailOverlay : Overlay
     {
         if (_shaderDict.TryGetValue(id, out shader) && shader != null)
             return true;
-        if (_protoManager.TryIndex<ShaderPrototype>(id, out var shaderRes) && shaderRes != null)
+        if (_protoManager.TryIndex<ShaderPrototype>(id, out var shaderRes))
         {
-            var instance = shaderRes.InstanceUnique();
+            var instance = shaderRes?.InstanceUnique();
             _shaderDict.Add(id, instance);
             shader = instance;
             return true;
@@ -89,7 +89,7 @@ public sealed class TrailOverlay : Overlay
     {
         if (_textureDict.TryGetValue(path, out texture) && texture != null)
             return true;
-        if(_cache.TryGetResource<TextureResource>(path, out var texRes) && texRes != null)
+        if(_cache.TryGetResource<TextureResource>(path, out var texRes))
         {
             _textureDict.Add(path, texRes);
             texture = texRes;

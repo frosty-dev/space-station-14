@@ -122,5 +122,5 @@ public sealed class TrailSystem : EntitySystem
     }
 
     public static IEnumerable<MapCoordinates> GetMapCoordinatesWithOffset(TrailComponent comp, TransformComponent xform)
-        => comp.Data.PointOffset.Select(x => xform.MapPosition.Offset(xform.WorldRotation.RotateVec(x)));
+        => comp.Data.PointOffsets.Select(x => xform.MapPosition.Offset(xform.WorldRotation.RotateVec(x)));
 }
