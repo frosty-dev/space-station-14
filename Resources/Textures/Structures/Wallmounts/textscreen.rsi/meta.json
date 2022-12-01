@@ -7,6 +7,12 @@
     "states": [
         {
             "name": "textscreen"
+        },
+        {
+            "name": "1"
+        },
+        {
+            "name": "2"
         }
     ]
 }
