@@ -1362,7 +1362,6 @@ namespace Content.Shared.CCVar
         /// </summary>
         public static readonly CVarDef<int> AutorestartRounds =
             CVarDef.Create("autorestart.rounds", 0, CVar.SERVERONLY);
-        
 
         /*
          * Corvax | Queue
@@ -1372,6 +1371,15 @@ namespace Content.Shared.CCVar
         ///     Controls if the connections queue is enabled. If enabled stop kicking new players after `SoftMaxPlayers` cap and instead add them to queue.
         /// </summary>
         public static readonly CVarDef<bool>
-            QueueEnabled = CVarDef.Create("queue.enabled", true, CVar.SERVERONLY);
+            QueueEnabled = CVarDef.Create("queue.enabled", false, CVar.SERVERONLY);
+        /*
+         * Corvax | JoinPlaytime
+         */
+
+        /// <summary>
+        ///     Minimum required overall play hours to join server
+        /// </summary>
+        public static readonly CVarDef<int> JoinPlaytimeHours =
+            CVarDef.Create("joinplaytime.min_hours", 0, CVar.SERVERONLY);
     }
 }
