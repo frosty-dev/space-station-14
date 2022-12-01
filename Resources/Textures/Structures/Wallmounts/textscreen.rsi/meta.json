@@ -4,6 +4,8 @@
         "x": 32,
         "y": 32
     },
+    "license": "MIT",
+    "copyright": "Armolitskiy",
     "states": [
         {
             "name": "textscreen"
