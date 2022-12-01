@@ -15,7 +15,7 @@
       entity: ScreenTimerFrame
       actions:
         - !type:SpriteStateChange
-          state: "1"
+          state: "textscreenb1"
       edges:
         - to: TimerFrameStart
           completed:
@@ -39,7 +39,7 @@
       entity: ScreenTimerFrame
       actions:
         - !type:SpriteStateChange
-          state: "2"
+          state: "textscreenb2"
       edges:
         - to: frame_screw
           steps:
@@ -51,7 +51,7 @@
       entity: ScreenTimerFrame
       actions:
         - !type:SpriteStateChange
-          state: "1"
+          state: "textscreenb1"
       edges:
         - to: SignalTimer
           steps:
@@ -71,7 +71,7 @@
     - node: ScreenTimerDis1
       actions:
         - !type:SpriteStateChange
-          state: "1"
+          state: "textscreenb1"
       entity: ScreenTimerFrame
       edges:
         - to: ScreenTimerDis2
@@ -87,7 +87,7 @@
       entity: ScreenTimerFrame
       actions:
         - !type:SpriteStateChange
-          state: "2"
+          state: "textscreenb2"
       edges:
         - to: frame
           completed:

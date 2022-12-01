@@ -91,4 +91,4 @@
     - type: Sprite
       drawdepth: WallMountedItems
       sprite: Structures/Wallmounts/textscreen.rsi
-      state: 1
+      state: textscreenb1
