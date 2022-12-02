@@ -36,41 +36,52 @@ public sealed class TrailOverlay : Overlay
         var handle = args.WorldHandle;
 
         foreach (var (comp, xform) in _entManager.EntityQuery<TrailComponent, TransformComponent>(true))
-            ProcessTrailData(handle, comp.Data, comp, xform);
+        {
+            comp.Data.LastParentCoords = xform.MapPosition;
+            ProcessTrailData(handle, comp.Data);
+        }
 
         foreach (var data in _system.DetachedTrails)
             ProcessTrailData(handle, data);
     }
 
-    private void ProcessTrailData(DrawingHandleBase handle, TrailData data, TrailComponent? comp = null, TransformComponent? xform = null)
+    private void ProcessTrailData(DrawingHandleBase handle, TrailData data)
     {
+        if (data.Segments.Last == null)
+            return;
+
         var settings = data.Settings;
         if(settings.ShaderSettings != null)
             handle.UseShader(GetCachedShader(settings.ShaderSettings.ShaderId));
 
-        (Vector2, Vector2)? prevPointsTuple = null;
-        if(comp != null && xform != null)
-            prevPointsTuple = TrailSystem.GetComponentTrailPoints(comp, xform);
+        (Vector2, Vector2) prevPointsTuple = OffsetByCoordDiff(
+            settings.Offset,
+            data.LastParentCoords.Position,
+            data.Segments.Last.Value.Coords.Position,
+            -1f
+            );
+
         var curNode = data.Segments.Last;
         while (curNode != null)
         {
             var curSegment = curNode.Value;
             var lifetimePercent = (curSegment.ExistTil - data.LifetimeAccumulator) / settings.Lifetime;
-            var curPointsTuple = TrailSystem.GetSegmentTrailPoints(curSegment, settings, lifetimePercent);
+            (Vector2, Vector2) curPointsTuple = OffsetByCoordDiff(
+                settings.Offset,
+                curSegment.Coords.Position,
+                curNode.Next?.Value.Coords.Position ?? data.LastParentCoords.Position
+                );
 
-            if(prevPointsTuple != null)
-            {
-                var color = settings.TexureColor;
-                if (settings.ShaderSettings != null && settings.ShaderSettings.EncodeLifetimeAsB)
-                    color.B = lifetimePercent;
-                else
-                    color.A = lifetimePercent;
+            var color = settings.TexureColor;
+            if (settings.ShaderSettings != null && settings.ShaderSettings.EncodeLifetimeAsB)
+                color.B = lifetimePercent;
+            else
+                color.A = lifetimePercent;
 
-                var tex = GetCachedTexture(settings.TexurePath);
-                if (tex != null)
-                    RenderTrailTexture(handle, prevPointsTuple.Value, curPointsTuple, tex, color);
-                //RenderTrailDebugBox(handle, prevPointsTuple.Value, curPointsTuple);
-            }
+            var tex = GetCachedTexture(settings.TexurePath);
+            if (tex != null)
+                RenderTrailTexture(handle, prevPointsTuple, curPointsTuple, tex, color);
+            //RenderTrailDebugBox(handle, prevPointsTuple.Value, curPointsTuple);
 
             prevPointsTuple = curPointsTuple;
             curNode = curNode.Previous;
@@ -99,6 +110,12 @@ public sealed class TrailOverlay : Overlay
             texture = texRes;
         _textureDict.Add(path, texture);
         return texture;
+    }
+
+    private static (Vector2, Vector2) OffsetByCoordDiff(Vector2 offset, Vector2 curPos, Vector2 nextPos, float signSwapMultiplier = 1f)
+    {
+        var rotatedOffset = (nextPos - curPos).ToWorldAngle().RotateVec(offset) * signSwapMultiplier;
+        return (curPos - rotatedOffset, curPos + rotatedOffset);
     }
 
     private static void RenderTrailTexture(DrawingHandleBase handle, (Vector2, Vector2) from, (Vector2, Vector2) to, Texture tex, Color color)

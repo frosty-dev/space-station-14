@@ -5,6 +5,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using System.Linq;
+using TerraFX.Interop.Windows;
 
 namespace Content.Client.White.Trail;
 
@@ -42,7 +43,6 @@ public sealed class TrailSystem : EntitySystem
             _gameTiming.InPrediction ||
             args.NewPosition.InRange(EntityManager, args.OldPosition, comp.Settings.СreationDistanceThreshold))
             return;
-        comp.LastMovement = args.NewPosition.ToMapPos(EntityManager) - args.OldPosition.ToMapPos(EntityManager);
         TryAddPoint(comp, args.Component);
     }
 
@@ -108,7 +108,7 @@ public sealed class TrailSystem : EntitySystem
 
         if (pointsList.Last == null)
         {
-            pointsList.AddLast(new TrailSegment(newPos, GetComponentSegmentCreationAngle(comp), data.LifetimeAccumulator + data.Settings.Lifetime));
+            pointsList.AddLast(new TrailSegment(newPos, data.LifetimeAccumulator + data.Settings.Lifetime));
             return;
         }
 
@@ -116,38 +116,6 @@ public sealed class TrailSystem : EntitySystem
         if (newPos.InRange(coords, comp.Settings.СreationDistanceThreshold))
             return;
         
-        pointsList.AddLast(new TrailSegment(newPos, GetComponentSegmentCreationAngle(comp), data.LifetimeAccumulator + data.Settings.Lifetime));
+        pointsList.AddLast(new TrailSegment(newPos, data.LifetimeAccumulator + data.Settings.Lifetime));
     }
-
-    public static (Vector2, Vector2) GetComponentTrailPoints(TrailComponent comp, TransformComponent xform)
-    {
-        var globalPos = xform.MapPosition.Position;
-        var offsetForward = GetComponentSegmentCreationAngle(comp).RotateVec(comp.Settings.Offset);
-        return (
-            globalPos - offsetForward,
-            globalPos + offsetForward
-            );
-    }
-
-    public static (Vector2, Vector2) GetSegmentTrailPoints(TrailSegment segment, TrailSettings settings, float lifetimePercent)
-    {
-        var globalPos = segment.Coords.Position;
-        var offsetForward = segment.Forward.RotateVec(settings.Offset);
-        var finalWidthMod = 1f;
-        if(settings.LifetimeWidthMod.HasValue)
-            finalWidthMod = settings.LifetimeWidthMod.Value * lifetimePercent;
-        return (
-            globalPos - offsetForward * finalWidthMod,
-            globalPos + offsetForward * finalWidthMod
-            );
-    }
-
-    public static Angle GetComponentSegmentCreationAngle(TrailComponent comp)
-    {
-        var res = comp.LastMovement + comp.Settings.Gravity;
-        if (res == Vector2.Zero)
-            res = Vector2.UnitY;
-        return res.ToWorldAngle();
-    }
-
 }
