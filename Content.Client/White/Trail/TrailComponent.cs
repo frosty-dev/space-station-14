@@ -20,28 +20,15 @@ public sealed class TrailComponent : Component
 [DataDefinition]
 public sealed class TrailData
 {
-    private Vector2[] _pointOffsets = default!;
-
     [ViewVariables]
     public LinkedList<TrailPoint> Points { get; } = new();
     [ViewVariables]
     public float LifetimeAccumulator { get; set; } //не доживет до ошибок с плавающей точкой надеюсь
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("pointOffsets", required: true)]
-    public Vector2[] PointOffsets
-    {
-        get => _pointOffsets;
-        set {
-            var offsets = new[] { Vector2.Zero, Vector2.Zero };
-            for (int i = 0; i < offsets.Length; i++)
-            {
-                var el = value.ElementAtOrDefault(i);
-                if (el != default)
-                    offsets[i] = el;
-            }
-            _pointOffsets = offsets;
-        }
-    }
+    public Vector2[] PointOffsets { get; set; } = default!;
+    public IEnumerable<Vector2> UsedPointOffsets => PointOffsets.Append(Vector2.Zero).Append(Vector2.Zero).Take(2);
+
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("pointGravity")]
     public Vector2 PointGravity { get; set; } = Vector2.Zero;
