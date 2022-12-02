@@ -104,3 +104,11 @@ Entries:
     type: Add
   id: 14
   time: '2022-12-01T19:05:58.0000000+00:00'
+- author: rhailrake
+  changes:
+  - message: xeno blocked.
+    type: Tweak
+  - message: buff magnum.
+    type: Tweak
+  id: 15
+  time: '2022-12-02T20:44:26.0000000+00:00'
