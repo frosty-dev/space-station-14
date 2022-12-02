@@ -44,8 +44,9 @@ public sealed class TrailOverlay : Overlay
 
     private void ProcessTrailData(DrawingHandleBase handle, TrailData data, TrailComponent? comp = null, TransformComponent? xform = null)
     {
-        if(data.ShaderSettings != null && TryGetCachedShader(data.ShaderSettings.ShaderId, out var shader) && shader != null)
-            handle.UseShader(shader);
+        if(data.ShaderSettings != null)
+            handle.UseShader(GetCachedShader(data.ShaderSettings.ShaderId));
+
         var curNode = data.Points.Last;
         while (curNode != null)
         {
@@ -61,7 +62,9 @@ public sealed class TrailOverlay : Overlay
                     color.B = lifetimePercent;
                 else
                     color.A = lifetimePercent;
-                if (TryGetCachedTexture(data.TexurePath, out var tex) && tex != null)
+
+                var tex = GetCachedTexture(data.TexurePath);
+                if (tex != null)
                     RenderTrailTexture(handle, prevPoint.Coords, curPoint.Coords, tex, color);
                 //RenderTrailDebugBox(handle, prevPoint.Coords, curPoint.Coords);
             }
@@ -71,31 +74,26 @@ public sealed class TrailOverlay : Overlay
     }
 
     //влепить на ети два метода мемори кеш со слайдинг експирейшоном вместо дикта если проблемы будут
-    private bool TryGetCachedShader(string id, out ShaderInstance? shader)
+    private ShaderInstance? GetCachedShader(string id)
     {
-        if (_shaderDict.TryGetValue(id, out shader) && shader != null)
-            return true;
+        ShaderInstance? shader = null;
+        if (_shaderDict.TryGetValue(id, out shader))
+            return shader;
         if (_protoManager.TryIndex<ShaderPrototype>(id, out var shaderRes))
-        {
-            var instance = shaderRes?.InstanceUnique();
-            _shaderDict.Add(id, instance);
-            shader = instance;
-            return true;
-        }
-        return false;
+            shader = shaderRes?.InstanceUnique();
+        _shaderDict.Add(id, shader);
+        return shader;
     }
 
-    private bool TryGetCachedTexture(string path, out Texture? texture)
+    private Texture? GetCachedTexture(string path)
     {
-        if (_textureDict.TryGetValue(path, out texture) && texture != null)
-            return true;
+        Texture? texture = null;
+        if (_textureDict.TryGetValue(path, out texture))
+            return texture;
         if(_cache.TryGetResource<TextureResource>(path, out var texRes))
-        {
-            _textureDict.Add(path, texRes);
             texture = texRes;
-            return true;
-        }
-        return false;
+        _textureDict.Add(path, texture);
+        return texture;
     }
 
     private static void RenderTrailTexture(DrawingHandleBase handle, ReadOnlySpan<MapCoordinates> from, ReadOnlySpan<MapCoordinates> to, Texture tex, Color color)
