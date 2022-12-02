@@ -23,7 +23,7 @@ public sealed class TrailData
     private Vector2[] _pointOffsets = default!;
 
     [ViewVariables]
-    public LinkedList<TrailPoint> Points { get; } = new LinkedList<TrailPoint>();
+    public LinkedList<TrailPoint> Points { get; } = new();
     [ViewVariables]
     public float LifetimeAccumulator { get; set; } //не доживет до ошибок с плавающей точкой надеюсь
     [ViewVariables(VVAccess.ReadWrite)]
