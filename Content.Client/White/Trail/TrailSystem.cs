@@ -2,6 +2,7 @@ using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using System.Linq;
 
@@ -10,6 +11,7 @@ namespace Content.Client.White.Trail;
 public sealed class TrailSystem : EntitySystem
 {
     [Dependency] private readonly IGameTiming _gameTiming = default!;
+    [Dependency] private readonly IRobustRandom _random = default!;
 
     public LinkedList<TrailData> DetachedTrails { get; } = new LinkedList<TrailData>();
 
@@ -36,10 +38,11 @@ public sealed class TrailSystem : EntitySystem
 
     private void OnTrailMove(EntityUid uid, TrailComponent comp, ref MoveEvent args)
     {
-        if (comp.PointCreationMethod != PointCreationMethod.OnMove ||
+        if (comp.Settings.СreationMethod != PointCreationMethod.OnMove ||
             _gameTiming.InPrediction ||
-            args.NewPosition.InRange(EntityManager, args.OldPosition, comp.PointCreationDistanceThreshold))
+            args.NewPosition.InRange(EntityManager, args.OldPosition, comp.Settings.СreationDistanceThreshold))
             return;
+        comp.LastMovement = args.NewPosition.ToMapPos(EntityManager) - args.OldPosition.ToMapPos(EntityManager);
         TryAddPoint(comp, args.Component);
     }
 
@@ -52,10 +55,10 @@ public sealed class TrailSystem : EntitySystem
             var data = comp.Data;
             UpdateTrailData(data, frameTime);
 
-            if (comp.PointCreationMethod == PointCreationMethod.InFrameUpdate)
+            if (comp.Settings.СreationMethod == PointCreationMethod.OnFrameUpdate)
                 TryAddPoint(comp, xform);
 
-            RemoveExpiredPoints(data.Points, data.LifetimeAccumulator);
+            RemoveExpiredPoints(data.Segments, data.LifetimeAccumulator);
             ProcessPoints(data);
         }
 
@@ -67,8 +70,8 @@ public sealed class TrailSystem : EntitySystem
 
             var data = curNode.Value;
             UpdateTrailData(data, frameTime);
-            RemoveExpiredPoints(data.Points, data.LifetimeAccumulator);
-            if (data.Points.Count > 0)
+            RemoveExpiredPoints(data.Segments, data.LifetimeAccumulator);
+            if (data.Segments.Count > 0)
                 ProcessPoints(data);
             else
                 DetachedTrails.Remove(curNode);
@@ -77,13 +80,13 @@ public sealed class TrailSystem : EntitySystem
 
     private static void UpdateTrailData(TrailData data, float frameTime)
     {
-        if (data.Points.Last == null)
+        if (data.Segments.Last == null)
             data.LifetimeAccumulator = 0;
         else
             data.LifetimeAccumulator += frameTime;
     }
 
-    private static void RemoveExpiredPoints(LinkedList<TrailPoint> points, float trailLifetime)
+    private static void RemoveExpiredPoints(LinkedList<TrailSegment> points, float trailLifetime)
     {
         while (points.First?.Value.ExistTil < trailLifetime)
             points.RemoveFirst();
@@ -91,36 +94,60 @@ public sealed class TrailSystem : EntitySystem
 
     private static void ProcessPoints(TrailData data)
     {
-        foreach (var point in data.Points)
-            for (int i = 0; i < point.Coords.Length; i++)
-                point.Coords[i] = point.Coords[i].Offset(data.PointGravity/* + comp.PointRandomWalk*/);
+        foreach (var point in data.Segments)
+            point.Coords = point.Coords.Offset(data.Settings.Gravity/* + comp.PointRandomWalk*/);
     }
 
     private static void TryAddPoint(TrailComponent comp, TransformComponent xform)
     {
         if (xform.MapID == MapId.Nullspace)
             return;
-
-        var newPointPos = GetMapCoordinatesWithOffset(comp, xform);
+        var newPos = xform.MapPosition;
         var data = comp.Data;
-        var pointsList = data.Points;
+        var pointsList = data.Segments;
 
-        var newPoints = newPointPos.ToArray();
         if (pointsList.Last == null)
         {
-            pointsList.AddLast(new TrailPoint(newPoints, data.LifetimeAccumulator + data.PointLifetime));
+            pointsList.AddLast(new TrailSegment(newPos, GetComponentSegmentCreationAngle(comp), data.LifetimeAccumulator + data.Settings.Lifetime));
             return;
         }
 
         var coords = pointsList.Last.Value.Coords;
-        if (coords.Length != newPoints.Length)
+        if (newPos.InRange(coords, comp.Settings.СreationDistanceThreshold))
             return;
-        for (int i = 0; i < coords.Length; i++)
-            if (newPoints[i].InRange(coords[i], comp.PointCreationDistanceThreshold))
-                return;
-        pointsList.AddLast(new TrailPoint(newPoints, data.LifetimeAccumulator + data.PointLifetime));
+        
+        pointsList.AddLast(new TrailSegment(newPos, GetComponentSegmentCreationAngle(comp), data.LifetimeAccumulator + data.Settings.Lifetime));
     }
 
-    public static IEnumerable<MapCoordinates> GetMapCoordinatesWithOffset(TrailComponent comp, TransformComponent xform)
-        => comp.Data.UsedPointOffsets.Select(x => xform.MapPosition.Offset(xform.WorldRotation.RotateVec(x)));
+    public static (Vector2, Vector2) GetComponentTrailPoints(TrailComponent comp, TransformComponent xform)
+    {
+        var globalPos = xform.MapPosition.Position;
+        var offsetForward = GetComponentSegmentCreationAngle(comp).RotateVec(comp.Settings.Offset);
+        return (
+            globalPos - offsetForward,
+            globalPos + offsetForward
+            );
+    }
+
+    public static (Vector2, Vector2) GetSegmentTrailPoints(TrailSegment segment, TrailSettings settings, float lifetimePercent)
+    {
+        var globalPos = segment.Coords.Position;
+        var offsetForward = segment.Forward.RotateVec(settings.Offset);
+        var finalWidthMod = 1f;
+        if(settings.LifetimeWidthMod.HasValue)
+            finalWidthMod = settings.LifetimeWidthMod.Value * lifetimePercent;
+        return (
+            globalPos - offsetForward * finalWidthMod,
+            globalPos + offsetForward * finalWidthMod
+            );
+    }
+
+    public static Angle GetComponentSegmentCreationAngle(TrailComponent comp)
+    {
+        var res = comp.LastMovement + comp.Settings.Gravity;
+        if (res == Vector2.Zero)
+            res = Vector2.UnitY;
+        return res.ToWorldAngle();
+    }
+
 }

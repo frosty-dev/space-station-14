@@ -44,30 +44,35 @@ public sealed class TrailOverlay : Overlay
 
     private void ProcessTrailData(DrawingHandleBase handle, TrailData data, TrailComponent? comp = null, TransformComponent? xform = null)
     {
-        if(data.ShaderSettings != null)
-            handle.UseShader(GetCachedShader(data.ShaderSettings.ShaderId));
+        var settings = data.Settings;
+        if(settings.ShaderSettings != null)
+            handle.UseShader(GetCachedShader(settings.ShaderSettings.ShaderId));
 
-        var curNode = data.Points.Last;
+        (Vector2, Vector2)? prevPointsTuple = null;
+        if(comp != null && xform != null)
+            prevPointsTuple = TrailSystem.GetComponentTrailPoints(comp, xform);
+        var curNode = data.Segments.Last;
         while (curNode != null)
         {
-            var curPoint = curNode.Value;
-            var prevPoint = curNode.Next?.Value;
-            if(prevPoint == null && comp != null && xform != null)
-                prevPoint = new TrailPoint(TrailSystem.GetMapCoordinatesWithOffset(comp, xform).ToArray(), data.LifetimeAccumulator + data.PointLifetime);
-            if(prevPoint != null)
+            var curSegment = curNode.Value;
+            var lifetimePercent = (curSegment.ExistTil - data.LifetimeAccumulator) / settings.Lifetime;
+            var curPointsTuple = TrailSystem.GetSegmentTrailPoints(curSegment, settings, lifetimePercent);
+
+            if(prevPointsTuple != null)
             {
-                var lifetimePercent = (curPoint.ExistTil - data.LifetimeAccumulator) / data.PointLifetime;
-                var color = Color.White;
-                if(data.ShaderSettings != null && data.ShaderSettings.EncodeLifetimeAsB)
+                var color = settings.TexureColor;
+                if (settings.ShaderSettings != null && settings.ShaderSettings.EncodeLifetimeAsB)
                     color.B = lifetimePercent;
                 else
                     color.A = lifetimePercent;
 
-                var tex = GetCachedTexture(data.TexurePath);
+                var tex = GetCachedTexture(settings.TexurePath);
                 if (tex != null)
-                    RenderTrailTexture(handle, prevPoint.Coords, curPoint.Coords, tex, color);
-                //RenderTrailDebugBox(handle, prevPoint.Coords, curPoint.Coords);
+                    RenderTrailTexture(handle, prevPointsTuple.Value, curPointsTuple, tex, color);
+                //RenderTrailDebugBox(handle, prevPointsTuple.Value, curPointsTuple);
             }
+
+            prevPointsTuple = curPointsTuple;
             curNode = curNode.Previous;
         }
         handle.UseShader(null);
@@ -76,7 +81,7 @@ public sealed class TrailOverlay : Overlay
     //влепить на ети два метода мемори кеш со слайдинг експирейшоном вместо дикта если проблемы будут
     private ShaderInstance? GetCachedShader(string id)
     {
-        ShaderInstance? shader = null;
+        ShaderInstance? shader;
         if (_shaderDict.TryGetValue(id, out shader))
             return shader;
         if (_protoManager.TryIndex<ShaderPrototype>(id, out var shaderRes))
@@ -87,7 +92,7 @@ public sealed class TrailOverlay : Overlay
 
     private Texture? GetCachedTexture(string path)
     {
-        Texture? texture = null;
+        Texture? texture;
         if (_textureDict.TryGetValue(path, out texture))
             return texture;
         if(_cache.TryGetResource<TextureResource>(path, out var texRes))
@@ -96,23 +101,23 @@ public sealed class TrailOverlay : Overlay
         return texture;
     }
 
-    private static void RenderTrailTexture(DrawingHandleBase handle, ReadOnlySpan<MapCoordinates> from, ReadOnlySpan<MapCoordinates> to, Texture tex, Color color)
+    private static void RenderTrailTexture(DrawingHandleBase handle, (Vector2, Vector2) from, (Vector2, Vector2) to, Texture tex, Color color)
     {
-        var verts = new DrawVertexUV2D[] { //TODO: сделать нормально
-            new (from[0].Position, Vector2.Zero),
-            new (from[1].Position, Vector2.UnitY),
-            new (to[1].Position, Vector2.One),
-            new (to[0].Position, Vector2.UnitX),
+        var verts = new DrawVertexUV2D[] {
+            new (from.Item1, Vector2.Zero),
+            new (from.Item2, Vector2.UnitY),
+            new (to.Item2, Vector2.One),
+            new (to.Item1, Vector2.UnitX),
         };
 
         handle.DrawPrimitives(DrawPrimitiveTopology.TriangleFan, tex, verts, color);
     }
 
-    private static void RenderTrailDebugBox(DrawingHandleBase handle, ReadOnlySpan<MapCoordinates> from, ReadOnlySpan<MapCoordinates> to)
+    private static void RenderTrailDebugBox(DrawingHandleBase handle, (Vector2, Vector2) from, (Vector2, Vector2) to)
     {
-        handle.DrawLine(from[0].Position, from[1].Position, Color.White);
-        handle.DrawLine(from[0].Position, to[0].Position, Color.White);
-        handle.DrawLine(from[1].Position, to[1].Position, Color.White);
-        handle.DrawLine(to[0].Position, to[1].Position, Color.Red);
+        handle.DrawLine(from.Item1, from.Item2, Color.White);
+        handle.DrawLine(from.Item1, to.Item1, Color.White);
+        handle.DrawLine(from.Item2, to.Item2, Color.White);
+        handle.DrawLine(to.Item1, to.Item2, Color.Red);
     }
 }
