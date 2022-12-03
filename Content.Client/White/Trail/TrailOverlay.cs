@@ -32,21 +32,25 @@ public sealed class TrailOverlay : Overlay
 
     protected override void Draw(in OverlayDrawArgs args)
     {
-        var handle = args.WorldHandle;
-
         foreach (var comp in _entManager.EntityQuery<TrailComponent>(true))
-            ProcessTrailData(handle, comp.Data);
+            ProcessTrailData(args.WorldHandle, comp.Data);
 
         foreach (var data in _system.DetachedTrails)
-            ProcessTrailData(handle, data);
+            ProcessTrailData(args.WorldHandle, data);
     }
 
-    private void ProcessTrailData(DrawingHandleBase handle, TrailData data)
+    private void ProcessTrailData(DrawingHandleWorld handle, TrailData data)
     {
         if (!data.CalculatedDrawData.Any())
             return;
 
         var settings = data.Settings;
+
+        var shader = settings.ShaderSettings != null ? GetCachedShader(settings.ShaderSettings.ShaderId) : null;
+        if (shader != null)
+        {
+            handle.UseShader(shader);
+        }
 
         var tex = GetCachedTexture(settings.TexurePath);
         if (tex != null)
@@ -59,6 +63,18 @@ public sealed class TrailOverlay : Overlay
                 prev = cur;
             }
         }
+        else
+        {
+            TrailSegmentDrawData prev = data.CalculatedDrawData.First();
+            foreach (var cur in data.CalculatedDrawData.Skip(1))
+            {
+                var color = Color.InterpolateBetween(settings.ColorLifetimeMod, settings.ColorBase, cur.LifetimePercent);
+                RenderTrailColor(handle, prev.Point1, prev.Point2, cur.Point1, cur.Point2, color);
+                prev = cur;
+            }
+        }
+
+        handle.UseShader(null);
 
 #if DEBUG
         if (false)
@@ -98,8 +114,6 @@ public sealed class TrailOverlay : Overlay
         return texture;
     }
 
-
-
     private static void RenderTrailTexture(DrawingHandleBase handle, Vector2 from1, Vector2 from2, Vector2 to1, Vector2 to2, Texture tex, Color color)
     {
         var verts = new DrawVertexUV2D[] {
@@ -110,6 +124,18 @@ public sealed class TrailOverlay : Overlay
         };
 
         handle.DrawPrimitives(DrawPrimitiveTopology.TriangleFan, tex, verts, color);
+    }
+
+    private static void RenderTrailColor(DrawingHandleBase handle, Vector2 from1, Vector2 from2, Vector2 to1, Vector2 to2,Color color)
+    {
+        var verts = new Vector2[] {
+            from1,
+            from2,
+            to2,
+            to1,
+        };
+
+        handle.DrawPrimitives(DrawPrimitiveTopology.TriangleFan, verts, color);
     }
 
     private static void RenderTrailDebugBox(DrawingHandleBase handle, Vector2 from1, Vector2 from2, Vector2 to1, Vector2 to2)
