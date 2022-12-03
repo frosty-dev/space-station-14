@@ -1,6 +1,9 @@
-namespace Content.Client.White.Trail;
+using Robust.Shared.Serialization;
+
+namespace Content.Shared.White.Trail;
 
 [DataDefinition]
+[Serializable, NetSerializable]
 public sealed class TrailShaderSettings
 {
     [ViewVariables(VVAccess.ReadWrite)]

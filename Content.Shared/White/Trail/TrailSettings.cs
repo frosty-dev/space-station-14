@@ -1,6 +1,9 @@
-namespace Content.Client.White.Trail;
+using Robust.Shared.Serialization;
+
+namespace Content.Shared.White.Trail;
 
 [DataDefinition]
+[Serializable, NetSerializable]
 public sealed class TrailSettings
 {
     [ViewVariables(VVAccess.ReadWrite)]
@@ -18,10 +21,6 @@ public sealed class TrailSettings
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("gravity")]
     public Vector2 Gravity { get; set; } = Vector2.Zero;
-
-    [ViewVariables(VVAccess.ReadWrite)]
-    [DataField("lifetimeWidthMod")]
-    public float? LifetimeWidthMod { get; set; }
 
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("randomWalk")]
@@ -46,9 +45,6 @@ public sealed class TrailSettings
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("shaderSettings")]
     public TrailShaderSettings? ShaderSettings { get; set; }
-
-    [ViewVariables(VVAccess.ReadWrite)]
-    public string СreationMethodKostilSetter { get => СreationMethod.ToString(); set => СreationMethod = Enum.Parse<PointCreationMethod>(value); }
 }
 public enum PointCreationMethod : byte
 {

@@ -1,16 +1,16 @@
+using Content.Shared.White.Trail;
 using Robust.Shared.Map;
 using System.Linq;
 
 namespace Content.Client.White.Trail;
 
 [RegisterComponent]
-public sealed class TrailComponent : Component
+public sealed class TrailComponent : SharedTrailComponent
 {
     [ViewVariables]
     public TrailData Data { get; set; } = new();
     [ViewVariables]
-    [DataField("settings", required: true)]
-    public TrailSettings Settings { get => Data.Settings; set => Data.Settings = value; } //капец впадлу пилить кастомный сериализатор
+    public override TrailSettings Settings { get => Data.Settings; set => Data.Settings = value; }
 }
 
 [DataDefinition]

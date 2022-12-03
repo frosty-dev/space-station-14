@@ -1,5 +1,7 @@
+using Content.Shared.White.Trail;
 using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
+using Robust.Shared.GameStates;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
@@ -28,6 +30,15 @@ public sealed class TrailSystem : EntitySystem
 
         SubscribeLocalEvent<TrailComponent, MoveEvent>(OnTrailMove);
         SubscribeLocalEvent<TrailComponent, ComponentRemove>(OnTrailRemove);
+        SubscribeLocalEvent<TrailComponent, ComponentHandleState>(OnHandleState);
+    }
+
+    private void OnHandleState(EntityUid uid, TrailComponent component, ref ComponentHandleState args)
+    {
+        if (args.Current is not TrailComponentState state)
+            return;
+
+        component.Settings = state.Settings;
     }
 
     private void OnTrailRemove(EntityUid uid, TrailComponent comp, ComponentRemove args)
