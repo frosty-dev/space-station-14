@@ -4,5 +4,6 @@ server-info-website-button = Сайт
 server-info-donate-button = Донат
 server-info-github-button = Github
 server-info-wiki-button = Wiki
+server-info-forum-button = Форум
 server-info-report-button = Сообщить об ошибке
 server-info-credits-button = Авторы

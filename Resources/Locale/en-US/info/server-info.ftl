@@ -4,5 +4,6 @@ server-info-website-button = Website
 server-info-donate-button = Donate
 server-info-github-button = Github
 server-info-wiki-button = Wiki
+server-info-forum-button = Forum
 server-info-report-button = Report Bugs
 server-info-credits-button = Credits
