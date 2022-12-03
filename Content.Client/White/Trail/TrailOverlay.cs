@@ -1,7 +1,6 @@
 using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
 using Robust.Shared.Enums;
-using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 using System.Linq;
 

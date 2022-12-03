@@ -99,31 +99,20 @@ public sealed class TrailSystem : EntitySystem
 
     private void ProcessSegmentMovement(TrailData data)
     {
-        var lifetime = data.Settings.Lifetime;
         var gravity = data.Settings.Gravity;
         var maxRandomWalk = data.Settings.MaxRandomWalk;
 
-        var nextNode = data.Segments.Last;
-        while (nextNode != null)
+        foreach (var cur in data.CalculatedDrawData)
         {
-            var curNode = nextNode;
-            nextNode = nextNode.Previous;
-
-            var curSegment = curNode.Value;
+            if (cur.Segment == null)
+                continue;
+            var curSegment = cur.Segment;
 
             var offset = gravity;
-            if (maxRandomWalk != Vector2.Zero)
+            if (maxRandomWalk != Vector2.Zero && cur.AngleRight != float.NaN)
             {
-                var alignedWalk = maxRandomWalk;
-                if(curNode.Next != null)
-                    alignedWalk = (curNode.Next.Value.Coords.Position - curSegment.Coords.Position)
-                        .ToWorldAngle().RotateVec(maxRandomWalk);
-
-                offset += new Vector2(
-                    alignedWalk.X * _random.NextFloat(-1.0f, 1.0f),
-                    alignedWalk.Y * _random.NextFloat(-1.0f, 1.0f)
-                    )
-                    * (curSegment.ExistTil - data.LifetimeAccumulator) / lifetime;
+                var alignedWalk = cur.AngleRight.RotateVec(maxRandomWalk);
+                offset += new Vector2(alignedWalk.X * _random.NextFloat(-1.0f, 1.0f), alignedWalk.Y * _random.NextFloat(-1.0f, 1.0f)) * cur.LifetimePercent;
             }
 
             curSegment.Coords = curSegment.Coords.Offset(offset);
@@ -136,7 +125,7 @@ public sealed class TrailSystem : EntitySystem
             return;
 
         var data = comp.Data;
-
+        var settings = data.Settings;
         if (data.LastParentCoords.HasValue && data.LastParentCoords.Value.MapId != xform.MapID)
         {
             DetachedTrails.AddLast(data);
@@ -144,7 +133,7 @@ public sealed class TrailSystem : EntitySystem
             comp.Settings = data.Settings;
         }
 
-        var newPos = xform.MapPosition;
+        var newPos = xform.MapPosition.Offset(settings.Gravity * 0.01f);
         var segmentsList = data.Segments;
 
         if (segmentsList.Last == null)
@@ -156,6 +145,8 @@ public sealed class TrailSystem : EntitySystem
         var coords = segmentsList.Last.Value.Coords;
         if (newPos.InRange(coords, comp.Settings.СreationDistanceThreshold))
             return;
+
+
 
         segmentsList.AddLast(new TrailSegment(newPos, data.LifetimeAccumulator + data.Settings.Lifetime));
     }

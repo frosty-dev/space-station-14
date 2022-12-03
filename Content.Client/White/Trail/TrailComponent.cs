@@ -20,7 +20,6 @@ public sealed class TrailData
     public TrailSettings Settings { get; set; } = default!;
     [ViewVariables]
     public LinkedList<TrailSegment> Segments { get; } = new();
-
     [ViewVariables]
     public float LifetimeAccumulator { get; set; } //не доживет до ошибок с плавающей точкой надеюсь
     [ViewVariables]
@@ -51,8 +50,7 @@ public sealed class TrailData
             baseOffset,
             parentCoords.Position,
             Segments.Last.Value.Coords.Position,
-            true)
-            ;
+            true);
 
         var curNode = Segments.Last;
         while (curNode != null)
@@ -63,19 +61,27 @@ public sealed class TrailData
                     (curSegment.ExistTil - LifetimeAccumulator) / Settings.Lifetime,
                     baseOffset,
                     curSegment.Coords.Position,
-                    curNode.Next?.Value.Coords.Position ?? parentCoords.Position
+                    curNode.Next?.Value.Coords.Position ?? parentCoords.Position,
+                    segment: curSegment
                     );
             curNode = curNode.Previous;
         }
     }
 
-    private static TrailSegmentDrawData ConstructDrawData(float lifetimePercent, Vector2 offset, Vector2 curPos, Vector2 nextPos, bool flipAngle = false)
+    private static TrailSegmentDrawData ConstructDrawData(
+        float lifetimePercent,
+        Vector2 offset,
+        Vector2 curPos,
+        Vector2 nextPos,
+        bool flipAngle = false,
+        TrailSegment? segment = null
+        )
     {
         var angle = (nextPos - curPos).ToWorldAngle();
         if (flipAngle)
             angle = angle.Opposite();
         var rotatedOffset = angle.RotateVec(offset);
-        return new TrailSegmentDrawData(curPos - rotatedOffset, curPos + rotatedOffset, angle, lifetimePercent);
+        return new TrailSegmentDrawData(curPos - rotatedOffset, curPos + rotatedOffset, angle, lifetimePercent, segment);
     }
 }
 
@@ -83,15 +89,17 @@ public struct TrailSegmentDrawData
 {
     public readonly Vector2 Point1;
     public readonly Vector2 Point2;
-    public readonly Angle AngleLeft;
+    public readonly Angle AngleRight;
     public readonly float LifetimePercent;
+    public readonly TrailSegment? Segment;
 
-    public TrailSegmentDrawData(Vector2 point1, Vector2 point2, Angle angleLeft, float lifetimePercent)
+    public TrailSegmentDrawData(Vector2 point1, Vector2 point2, Angle angleLeft, float lifetimePercent, TrailSegment? segment = null)
     {
         Point1 = point1;
         Point2 = point2;
-        AngleLeft = angleLeft;
+        AngleRight = angleLeft;
         LifetimePercent = lifetimePercent;
+        Segment = segment;
     }
 }
 
