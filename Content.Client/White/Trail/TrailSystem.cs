@@ -99,17 +99,31 @@ public sealed class TrailSystem : EntitySystem
         var lifetime = data.Settings.Lifetime;
         var gravity = data.Settings.Gravity;
         var maxRandomWalk = data.Settings.MaxRandomWalk;
-        foreach (var segment in data.Segments)
+
+        var nextNode = data.Segments.Last;
+        while (nextNode != null)
         {
+            var curNode = nextNode;
+            nextNode = nextNode.Previous;
+
+            var curSegment = curNode.Value;
+
             var offset = gravity;
             if (maxRandomWalk != Vector2.Zero)
-                offset += new Vector2(
-                    maxRandomWalk.X * _random.NextFloat(0.0f, 1.0f),
-                    maxRandomWalk.Y * _random.NextFloat(0.0f, 1.0f)
-                    )
-                    * (segment.ExistTil - data.LifetimeAccumulator) / lifetime;
+            {
+                var alignedWalk = maxRandomWalk;
+                if(curNode.Next != null)
+                    alignedWalk = (curNode.Next.Value.Coords.Position - curSegment.Coords.Position)
+                        .ToWorldAngle().RotateVec(maxRandomWalk);
 
-            segment.Coords = segment.Coords.Offset(offset);
+                offset += new Vector2(
+                    alignedWalk.X * _random.NextFloat(-1.0f, 1.0f),
+                    alignedWalk.Y * _random.NextFloat(-1.0f, 1.0f)
+                    )
+                    * (curSegment.ExistTil - data.LifetimeAccumulator) / lifetime;
+            }
+
+            curSegment.Coords = curSegment.Coords.Offset(offset);
         }
     }
 
