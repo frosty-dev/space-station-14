@@ -73,60 +73,6 @@ public sealed class TrailOverlay : Overlay
             }
         }
 #endif
-
-
-
-        /*
-        if (data.Segments.Last == null)
-            return;
-
-        
-
-
-        var settings = data.Settings;
-        var shader = settings.ShaderSettings != null ? GetCachedShader(settings.ShaderSettings.ShaderId) : null;
-        if (shader != null)
-        {
-            if (ScreenTexture != null)
-                shader.SetParameter("SCREEN_TEXTURE", ScreenTexture);
-            handle.UseShader(shader);
-        }
-
-        (Vector2, Vector2) prevPointsTuple = OffsetByCoordDiff(
-            settings.Offset,
-            data.LastParentCoords.Position,
-            data.Segments.Last.Value.Coords.Position,
-            -1f
-            );
-
-        var nextNode = data.Segments.Last;
-        while (nextNode != null)
-        {
-            var curNode = nextNode;
-            nextNode = nextNode.Previous;
-
-            var curSegment = curNode.Value;
-            if (curSegment.Coords.MapId != mapId)
-                continue;
-
-            var lifetimePercent = (curSegment.ExistTil - data.LifetimeAccumulator) / settings.Lifetime;
-            (Vector2, Vector2) curPointsTuple = OffsetByCoordDiff(
-                settings.Offset,
-                curSegment.Coords.Position,
-                curNode.Next?.Value.Coords.Position ?? data.LastParentCoords.Position
-                );
-
-            var color = Color.InterpolateBetween(settings.ColorLifetimeMod, settings.ColorBase, lifetimePercent);
-
-            var tex = GetCachedTexture(settings.TexurePath);
-            if (tex != null)
-                RenderTrailTexture(handle, prevPointsTuple, curPointsTuple, tex, color);
-            //RenderTrailDebugBox(handle, prevPointsTuple.Value, curPointsTuple);
-
-            prevPointsTuple = curPointsTuple;
-        }
-        handle.UseShader(null);
-        */
     }
 
     //влепить на ети два метода мемори кеш со слайдинг експирейшоном вместо дикта если проблемы будут
