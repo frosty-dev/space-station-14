@@ -1,4 +1,3 @@
-using Content.Server.DoAfter;
 using Content.Shared.White.Trail;
 using Robust.Shared.GameStates;
 
@@ -23,7 +22,7 @@ public sealed class TrailSystem : EntitySystem
 
         foreach (var comp in EntityManager.EntityQuery<TrailComponent>())
         {
-            if(comp.MakeDirtyKostil)
+            if (comp.MakeDirtyKostil)
             {
                 Dirty(comp);
                 comp.MakeDirtyKostil = false;
