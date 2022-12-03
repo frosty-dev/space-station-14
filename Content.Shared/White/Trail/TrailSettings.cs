@@ -6,9 +6,15 @@ namespace Content.Shared.White.Trail;
 [Serializable, NetSerializable]
 public sealed class TrailSettings
 {
+    public readonly static TrailSettings Default = new()
+    {
+        Gravity = new Vector2(0.05f, 0.05f),
+        MaxRandomWalk = new Vector2(0.005f, 0.005f),
+    };
+
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("offset", required: true)]
-    public Vector2 Offset { get; set; } = Vector2.UnitY;
+    public Vector2 Offset { get; set; } = Vector2.UnitX;
 
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("сreationDistanceThreshold")]
@@ -28,7 +34,7 @@ public sealed class TrailSettings
 
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("lifetime", required: true)]
-    public float Lifetime { get; set; }
+    public float Lifetime { get; set; } = 1f;
 
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("texturePath", required: true)]

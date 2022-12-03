@@ -33,7 +33,8 @@ public sealed class TrailOverlay : Overlay
     protected override void Draw(in OverlayDrawArgs args)
     {
         foreach (var comp in _entManager.EntityQuery<TrailComponent>(true))
-            ProcessTrailData(args.WorldHandle, comp.Data);
+            if (comp.Data != null)
+                ProcessTrailData(args.WorldHandle, comp.Data);
 
         foreach (var data in _system.DetachedTrails)
             ProcessTrailData(args.WorldHandle, data);

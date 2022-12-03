@@ -8,14 +8,15 @@ namespace Content.Client.White.Trail;
 public sealed class TrailComponent : SharedTrailComponent
 {
     [ViewVariables]
-    public TrailData Data { get; set; } = new();
+    public TrailData? Data { get; set; } = null;
     [ViewVariables]
-    public override TrailSettings Settings { get => Data.Settings; set => Data.Settings = value; }
+    public override TrailSettings Settings { get; set; } = TrailSettings.Default;
 }
 
 [DataDefinition]
 public sealed class TrailData
 {
+
     [ViewVariables]
     public TrailSettings Settings { get; set; } = default!;
     [ViewVariables]
@@ -26,6 +27,11 @@ public sealed class TrailData
     public MapCoordinates? LastParentCoords { get; private set; } = null;
     [ViewVariables]
     public IEnumerable<TrailSegmentDrawData> CalculatedDrawData { get; private set; } = Enumerable.Empty<TrailSegmentDrawData>();
+
+    public TrailData(TrailSettings settings)
+    {
+        Settings = settings;
+    }
 
     public void UpdateDrawData(MapCoordinates? parentCoords = null)
     {

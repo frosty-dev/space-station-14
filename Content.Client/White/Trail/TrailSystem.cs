@@ -39,11 +39,14 @@ public sealed class TrailSystem : EntitySystem
             return;
 
         component.Settings = state.Settings;
+        if(component.Data != null)
+            component.Data.Settings = state.Settings;
     }
 
     private void OnTrailRemove(EntityUid uid, TrailComponent comp, ComponentRemove args)
     {
-        DetachedTrails.AddLast(comp.Data);
+        if(comp.Data != null)
+            DetachedTrails.AddLast(comp.Data);
     }
 
     private void OnTrailMove(EntityUid uid, TrailComponent comp, ref MoveEvent args)
@@ -64,14 +67,15 @@ public sealed class TrailSystem : EntitySystem
 
         foreach (var (comp, xform) in EntityQuery<TrailComponent, TransformComponent>())
         {
-            var data = comp.Data;
-
-            UpdateTrailData(data, frameTime, xform.MapPosition);
-
             if (comp.Settings.СreationMethod == PointCreationMethod.OnFrameUpdate)
                 TryAddSegment(comp, xform);
 
+            var data = comp.Data;
+            if (data == null)
+                continue;
+
             RemoveExpiredPoints(data.Segments, data.LifetimeAccumulator);
+            UpdateTrailData(data, frameTime, xform.MapPosition);
             ProcessSegmentMovement(data);
         }
 
@@ -135,16 +139,17 @@ public sealed class TrailSystem : EntitySystem
         if (xform.MapID == MapId.Nullspace)
             return;
 
+        if (comp.Data == null)
+            comp.Data = new(comp.Settings);
+
         var data = comp.Data;
-        var settings = data.Settings;
         if (data.LastParentCoords.HasValue && data.LastParentCoords.Value.MapId != xform.MapID)
         {
             DetachedTrails.AddLast(data);
-            comp.Data = new();
-            comp.Settings = data.Settings;
+            comp.Data = new(comp.Settings);
         }
 
-        var newPos = xform.MapPosition.Offset(settings.Gravity * 0.01f);
+        var newPos = xform.MapPosition.Offset(data.Settings.Gravity * 0.01f);
         var segmentsList = data.Segments;
 
         if (segmentsList.Last == null)
