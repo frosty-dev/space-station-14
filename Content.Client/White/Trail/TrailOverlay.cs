@@ -82,8 +82,7 @@ public sealed class TrailOverlay : Overlay
                 curNode.Next?.Value.Coords.Position ?? data.LastParentCoords.Position
                 );
 
-            var color = settings.ColorBase;
-            color = Color.InterpolateBetween(settings.ColorLifetimeMod, color, lifetimePercent);
+            var color = Color.InterpolateBetween(settings.ColorLifetimeMod, settings.ColorBase, lifetimePercent);
 
             var tex = GetCachedTexture(settings.TexurePath);
             if (tex != null)
