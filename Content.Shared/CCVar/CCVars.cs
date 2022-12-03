@@ -1408,7 +1408,7 @@ namespace Content.Shared.CCVar
             CVarDef.Create("infolinks.bug_report", "", CVar.SERVER | CVar.REPLICATED);
 
         /// <summary>
-        /// Link to the bug report form.
+        /// Link to the donates.
         /// </summary>
         public static readonly CVarDef<string> InfoLinksDonate =
             CVarDef.Create("infolinks.donate", "", CVar.SERVER | CVar.REPLICATED);
