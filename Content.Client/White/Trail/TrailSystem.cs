@@ -44,7 +44,7 @@ public sealed class TrailSystem : EntitySystem
             )
             return;
 
-        TryAddPoint(comp, args.Component);
+        TryAddSegment(comp, args.Component);
     }
 
     public override void FrameUpdate(float frameTime)
@@ -58,10 +58,10 @@ public sealed class TrailSystem : EntitySystem
             UpdateTrailData(data, frameTime);
 
             if (comp.Settings.СreationMethod == PointCreationMethod.OnFrameUpdate)
-                TryAddPoint(comp, xform);
+                TryAddSegment(comp, xform);
 
             RemoveExpiredPoints(data.Segments, data.LifetimeAccumulator);
-            ProcessPoints(data);
+            ProcessSegmentMovement(data);
         }
 
         var nextNode = DetachedTrails.First;
@@ -74,7 +74,7 @@ public sealed class TrailSystem : EntitySystem
             UpdateTrailData(data, frameTime);
             RemoveExpiredPoints(data.Segments, data.LifetimeAccumulator);
             if (data.Segments.Count > 0)
-                ProcessPoints(data);
+                ProcessSegmentMovement(data);
             else
                 DetachedTrails.Remove(curNode);
         }
@@ -88,13 +88,13 @@ public sealed class TrailSystem : EntitySystem
             data.LifetimeAccumulator += frameTime;
     }
 
-    private void RemoveExpiredPoints(LinkedList<TrailSegment> points, float trailLifetime)
+    private void RemoveExpiredPoints(LinkedList<TrailSegment> segment, float trailLifetime)
     {
-        while (points.First?.Value.ExistTil < trailLifetime)
-            points.RemoveFirst();
+        while (segment.First?.Value.ExistTil < trailLifetime)
+            segment.RemoveFirst();
     }
 
-    private void ProcessPoints(TrailData data)
+    private void ProcessSegmentMovement(TrailData data)
     {
         var lifetime = data.Settings.Lifetime;
         var gravity = data.Settings.Gravity;
@@ -127,7 +127,7 @@ public sealed class TrailSystem : EntitySystem
         }
     }
 
-    private void TryAddPoint(TrailComponent comp, TransformComponent xform)
+    private void TryAddSegment(TrailComponent comp, TransformComponent xform)
     {
         if (xform.MapID == MapId.Nullspace)
             return;
@@ -142,18 +142,18 @@ public sealed class TrailSystem : EntitySystem
         }
 
         var newPos = xform.MapPosition;
-        var pointsList = data.Segments;
+        var segmentsList = data.Segments;
 
-        if (pointsList.Last == null)
+        if (segmentsList.Last == null)
         {
-            pointsList.AddLast(new TrailSegment(newPos, data.LifetimeAccumulator + data.Settings.Lifetime));
+            segmentsList.AddLast(new TrailSegment(newPos, data.LifetimeAccumulator + data.Settings.Lifetime));
             return;
         }
 
-        var coords = pointsList.Last.Value.Coords;
+        var coords = segmentsList.Last.Value.Coords;
         if (newPos.InRange(coords, comp.Settings.СreationDistanceThreshold))
             return;
 
-        pointsList.AddLast(new TrailSegment(newPos, data.LifetimeAccumulator + data.Settings.Lifetime));
+        segmentsList.AddLast(new TrailSegment(newPos, data.LifetimeAccumulator + data.Settings.Lifetime));
     }
 }
