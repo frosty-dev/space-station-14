@@ -6,7 +6,7 @@ namespace Content.Client.White.Trail;
 public sealed class TrailComponent : Component
 {
     [ViewVariables]
-    public TrailData Data { get; } = new();
+    public TrailData Data { get; set; } = new();
     [ViewVariables]
     [DataField("settings", required: true)]
     public TrailSettings Settings { get => Data.Settings; set => Data.Settings = value; } //капец впадлу пилить кастомный сериализатор

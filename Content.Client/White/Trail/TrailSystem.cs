@@ -39,9 +39,13 @@ public sealed class TrailSystem : EntitySystem
 
     private void OnTrailMove(EntityUid uid, TrailComponent comp, ref MoveEvent args)
     {
-        if (comp.Settings.СreationMethod != PointCreationMethod.OnMove ||
-            _gameTiming.InPrediction ||
-            args.NewPosition.InRange(EntityManager, args.OldPosition, comp.Settings.СreationDistanceThreshold))
+        if (
+            comp.Settings.СreationMethod != PointCreationMethod.OnMove 
+            || _gameTiming.InPrediction
+            || !args.NewPosition.TryDistance(EntityManager, args.OldPosition, out var distance)
+            || distance < comp.Settings.СreationDistanceThreshold
+            || distance > comp.Settings.СreationDistanceThreshold * 10f
+            )
             return;
         TryAddPoint(comp, args.Component);
     }
@@ -53,6 +57,7 @@ public sealed class TrailSystem : EntitySystem
         foreach (var (comp, xform) in EntityQuery<TrailComponent, TransformComponent>())
         {
             var data = comp.Data;
+
             UpdateTrailData(data, frameTime);
 
             if (comp.Settings.СreationMethod == PointCreationMethod.OnFrameUpdate)
@@ -78,7 +83,7 @@ public sealed class TrailSystem : EntitySystem
         }
     }
 
-    private static void UpdateTrailData(TrailData data, float frameTime)
+    private void UpdateTrailData(TrailData data, float frameTime)
     {
         if (data.Segments.Last == null)
             data.LifetimeAccumulator = 0;
@@ -86,24 +91,33 @@ public sealed class TrailSystem : EntitySystem
             data.LifetimeAccumulator += frameTime;
     }
 
-    private static void RemoveExpiredPoints(LinkedList<TrailSegment> points, float trailLifetime)
+    private void RemoveExpiredPoints(LinkedList<TrailSegment> points, float trailLifetime)
     {
         while (points.First?.Value.ExistTil < trailLifetime)
             points.RemoveFirst();
     }
 
-    private static void ProcessPoints(TrailData data)
+    private void ProcessPoints(TrailData data)
     {
         foreach (var point in data.Segments)
             point.Coords = point.Coords.Offset(data.Settings.Gravity/* + comp.PointRandomWalk*/);
     }
 
-    private static void TryAddPoint(TrailComponent comp, TransformComponent xform)
+    private void TryAddPoint(TrailComponent comp, TransformComponent xform)
     {
         if (xform.MapID == MapId.Nullspace)
             return;
-        var newPos = xform.MapPosition;
+
         var data = comp.Data;
+
+        if (data.LastParentCoords.MapId != xform.MapID)
+        {
+            DetachedTrails.AddLast(data);
+            comp.Data = new();
+            comp.Settings = data.Settings;
+        }
+
+        var newPos = xform.MapPosition;
         var pointsList = data.Segments;
 
         if (pointsList.Last == null)
