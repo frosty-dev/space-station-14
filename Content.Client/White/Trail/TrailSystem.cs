@@ -55,7 +55,7 @@ public sealed class TrailSystem : EntitySystem
         {
             var data = comp.Data;
 
-            UpdateTrailData(data, frameTime);
+            UpdateTrailData(data, frameTime, xform.MapPosition);
 
             if (comp.Settings.СreationMethod == PointCreationMethod.OnFrameUpdate)
                 TryAddSegment(comp, xform);
@@ -80,12 +80,15 @@ public sealed class TrailSystem : EntitySystem
         }
     }
 
-    private void UpdateTrailData(TrailData data, float frameTime)
+    private void UpdateTrailData(TrailData data, float frameTime, MapCoordinates? parentCoord = null)
     {
         if (data.Segments.Last == null)
+        {
             data.LifetimeAccumulator = 0;
-        else
-            data.LifetimeAccumulator += frameTime;
+            return;
+        }
+        data.LifetimeAccumulator += frameTime;
+        data.UpdateDrawData(parentCoord);
     }
 
     private void RemoveExpiredPoints(LinkedList<TrailSegment> segment, float trailLifetime)
@@ -134,7 +137,7 @@ public sealed class TrailSystem : EntitySystem
 
         var data = comp.Data;
 
-        if (data.LastParentCoords.MapId != xform.MapID)
+        if (data.LastParentCoords.HasValue && data.LastParentCoords.Value.MapId != xform.MapID)
         {
             DetachedTrails.AddLast(data);
             comp.Data = new();

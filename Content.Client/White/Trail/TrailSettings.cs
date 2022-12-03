@@ -46,6 +46,9 @@ public sealed class TrailSettings
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("shaderSettings")]
     public TrailShaderSettings? ShaderSettings { get; set; }
+
+    [ViewVariables(VVAccess.ReadWrite)]
+    public string СreationMethodKostilSetter { get => СreationMethod.ToString(); set => СreationMethod = Enum.Parse<PointCreationMethod>(value); }
 }
 public enum PointCreationMethod : byte
 {
