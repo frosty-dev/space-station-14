@@ -24,7 +24,7 @@ public sealed class TrailSettings
     public float? LifetimeWidthMod { get; set; }
 
     [ViewVariables(VVAccess.ReadWrite)]
-    [DataField("RandomWalk")]
+    [DataField("randomWalk")]
     public Vector2 MaxRandomWalk { get; set; } = Vector2.Zero;
 
     [ViewVariables(VVAccess.ReadWrite)]

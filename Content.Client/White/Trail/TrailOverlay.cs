@@ -35,8 +35,9 @@ public sealed class TrailOverlay : Overlay
     {
         var handle = args.WorldHandle;
 
-        foreach (var (comp, xform) in _entManager.EntityQuery<TrailComponent, TransformComponent>(true))
+        foreach (var (comp, xform) in _entManager.EntityQuery<TrailComponent, TransformComponent>())
         {
+
             comp.Data.LastParentCoords = xform.MapPosition;
             ProcessTrailData(handle, comp.Data);
         }
@@ -50,6 +51,10 @@ public sealed class TrailOverlay : Overlay
         if (data.Segments.Last == null)
             return;
 
+        var mapId = data.LastParentCoords.MapId;
+        if (mapId == MapId.Nullspace)
+            return;
+
         var settings = data.Settings;
         if(settings.ShaderSettings != null)
             handle.UseShader(GetCachedShader(settings.ShaderSettings.ShaderId));
@@ -61,10 +66,16 @@ public sealed class TrailOverlay : Overlay
             -1f
             );
 
-        var curNode = data.Segments.Last;
-        while (curNode != null)
+        var nextNode = data.Segments.Last;
+        while (nextNode != null)
         {
+            var curNode = nextNode;
+            nextNode = nextNode.Previous;
+
             var curSegment = curNode.Value;
+            if (curSegment.Coords.MapId != mapId)
+                continue;
+            
             var lifetimePercent = (curSegment.ExistTil - data.LifetimeAccumulator) / settings.Lifetime;
             (Vector2, Vector2) curPointsTuple = OffsetByCoordDiff(
                 settings.Offset,
@@ -84,7 +95,6 @@ public sealed class TrailOverlay : Overlay
             //RenderTrailDebugBox(handle, prevPointsTuple.Value, curPointsTuple);
 
             prevPointsTuple = curPointsTuple;
-            curNode = curNode.Previous;
         }
         handle.UseShader(null);
     }

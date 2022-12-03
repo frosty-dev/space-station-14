@@ -42,11 +42,10 @@ public sealed class TrailSystem : EntitySystem
         if (
             comp.Settings.СreationMethod != PointCreationMethod.OnMove 
             || _gameTiming.InPrediction
-            || !args.NewPosition.TryDistance(EntityManager, args.OldPosition, out var distance)
-            || distance < comp.Settings.СreationDistanceThreshold
-            || distance > comp.Settings.СreationDistanceThreshold * 10f
+            || args.NewPosition.InRange(EntityManager, args.OldPosition, comp.Settings.СreationDistanceThreshold)
             )
             return;
+        
         TryAddPoint(comp, args.Component);
     }
 
@@ -99,8 +98,21 @@ public sealed class TrailSystem : EntitySystem
 
     private void ProcessPoints(TrailData data)
     {
-        foreach (var point in data.Segments)
-            point.Coords = point.Coords.Offset(data.Settings.Gravity/* + comp.PointRandomWalk*/);
+        var lifetime = data.Settings.Lifetime;
+        var gravity = data.Settings.Gravity;
+        var maxRandomWalk = data.Settings.MaxRandomWalk;
+        foreach (var segment in data.Segments)
+        {
+            var offset = gravity;
+            if (maxRandomWalk != Vector2.Zero)
+                offset += new Vector2(
+                    maxRandomWalk.X * _random.NextFloat(0.0f, 1.0f),
+                    maxRandomWalk.Y * _random.NextFloat(0.0f, 1.0f)
+                    )
+                    * (segment.ExistTil - data.LifetimeAccumulator) / lifetime;
+
+            segment.Coords = segment.Coords.Offset(offset);
+        }
     }
 
     private void TryAddPoint(TrailComponent comp, TransformComponent xform)
