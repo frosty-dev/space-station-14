@@ -36,8 +36,12 @@ public sealed class TrailSettings
     public string TexurePath { get; set; } = string.Empty;
 
     [ViewVariables(VVAccess.ReadWrite)]
-    [DataField("textureColor")]
-    public Color TexureColor { get; set; } = Color.White;
+    [DataField("colorBase")]
+    public Color ColorBase { get; set; } = Color.White;
+
+    [ViewVariables(VVAccess.ReadWrite)]
+    [DataField("colorLifetimeMod")]
+    public Color ColorLifetimeMod { get; set; } = Color.Transparent;
 
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("shaderSettings")]

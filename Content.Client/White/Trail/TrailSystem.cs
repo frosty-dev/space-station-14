@@ -4,8 +4,6 @@ using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
-using System.Linq;
-using TerraFX.Interop.Windows;
 
 namespace Content.Client.White.Trail;
 
@@ -40,12 +38,12 @@ public sealed class TrailSystem : EntitySystem
     private void OnTrailMove(EntityUid uid, TrailComponent comp, ref MoveEvent args)
     {
         if (
-            comp.Settings.СreationMethod != PointCreationMethod.OnMove 
+            comp.Settings.СreationMethod != PointCreationMethod.OnMove
             || _gameTiming.InPrediction
             || args.NewPosition.InRange(EntityManager, args.OldPosition, comp.Settings.СreationDistanceThreshold)
             )
             return;
-        
+
         TryAddPoint(comp, args.Component);
     }
 
@@ -141,7 +139,7 @@ public sealed class TrailSystem : EntitySystem
         var coords = pointsList.Last.Value.Coords;
         if (newPos.InRange(coords, comp.Settings.СreationDistanceThreshold))
             return;
-        
+
         pointsList.AddLast(new TrailSegment(newPos, data.LifetimeAccumulator + data.Settings.Lifetime));
     }
 }

@@ -3,7 +3,6 @@ using Robust.Client.ResourceManagement;
 using Robust.Shared.Enums;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
-using System.Linq;
 
 namespace Content.Client.White.Trail;
 
@@ -56,7 +55,7 @@ public sealed class TrailOverlay : Overlay
             return;
 
         var settings = data.Settings;
-        if(settings.ShaderSettings != null)
+        if (settings.ShaderSettings != null)
             handle.UseShader(GetCachedShader(settings.ShaderSettings.ShaderId));
 
         (Vector2, Vector2) prevPointsTuple = OffsetByCoordDiff(
@@ -75,7 +74,7 @@ public sealed class TrailOverlay : Overlay
             var curSegment = curNode.Value;
             if (curSegment.Coords.MapId != mapId)
                 continue;
-            
+
             var lifetimePercent = (curSegment.ExistTil - data.LifetimeAccumulator) / settings.Lifetime;
             (Vector2, Vector2) curPointsTuple = OffsetByCoordDiff(
                 settings.Offset,
@@ -83,11 +82,8 @@ public sealed class TrailOverlay : Overlay
                 curNode.Next?.Value.Coords.Position ?? data.LastParentCoords.Position
                 );
 
-            var color = settings.TexureColor;
-            if (settings.ShaderSettings != null && settings.ShaderSettings.EncodeLifetimeAsB)
-                color.B = lifetimePercent;
-            else
-                color.A = lifetimePercent;
+            var color = settings.ColorBase;
+            color = Color.InterpolateBetween(settings.ColorLifetimeMod, color, lifetimePercent);
 
             var tex = GetCachedTexture(settings.TexurePath);
             if (tex != null)
@@ -116,7 +112,7 @@ public sealed class TrailOverlay : Overlay
         Texture? texture;
         if (_textureDict.TryGetValue(path, out texture))
             return texture;
-        if(_cache.TryGetResource<TextureResource>(path, out var texRes))
+        if (_cache.TryGetResource<TextureResource>(path, out var texRes))
             texture = texRes;
         _textureDict.Add(path, texture);
         return texture;
