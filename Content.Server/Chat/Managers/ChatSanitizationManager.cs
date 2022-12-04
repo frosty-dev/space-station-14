@@ -1,13 +1,20 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using Content.Shared.CCVar;
 using Robust.Shared.Configuration;
+using Robust.Shared.ContentPack;
+using Robust.Shared.Utility;
 
 namespace Content.Server.Chat.Managers;
 
 public sealed class ChatSanitizationManager : IChatSanitizationManager
 {
     [Dependency] private readonly IConfigurationManager _configurationManager = default!;
+    [Dependency] private readonly IResourceManager _resources = default!;
+
+    private Dictionary<string, string> _slangToNormal = new();
 
     private static readonly Dictionary<string, string> SmileyToEmote = new()
     {
@@ -84,6 +91,17 @@ public sealed class ChatSanitizationManager : IChatSanitizationManager
     public void Initialize()
     {
         _configurationManager.OnValueChanged(CCVars.ChatSanitizerEnabled, x => _doSanitize = x, true);
+
+        try
+        {
+            var filterData = _resources.ContentFileReadAllText(new ResourcePath("/White/ChatFilters/slang.json"));
+            _slangToNormal = JsonSerializer.Deserialize<Dictionary<string, string>>(filterData)!;
+        }
+        catch (Exception e)
+        {
+            Logger.ErrorS("chat", "Failed to load slang.json: {0}", e);
+        }
+
     }
 
     public bool TrySanitizeOutSmilies(string input, EntityUid speaker, out string sanitized, [NotNullWhen(true)] out string? emote)
@@ -110,5 +128,18 @@ public sealed class ChatSanitizationManager : IChatSanitizationManager
         sanitized = input;
         emote = null;
         return false;
+    }
+
+    public string SanitizeOutSlang(string input)
+    {
+        string pattern = @"\b(?<word>\w+)\b";
+
+        var newMessage = Regex.Replace(input, pattern ,
+            match =>
+            {
+                return _slangToNormal.ContainsKey(match.Groups[1].Value.ToLower()) ? _slangToNormal[match.Groups[1].Value.ToLower()] : match.Value;
+            }, RegexOptions.IgnoreCase);
+
+        return newMessage;
     }
 }
