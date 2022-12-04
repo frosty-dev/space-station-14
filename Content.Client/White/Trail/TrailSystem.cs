@@ -6,6 +6,7 @@ using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
+using System.Linq;
 
 namespace Content.Client.White.Trail;
 
@@ -95,7 +96,7 @@ public sealed class TrailSystem : EntitySystem
         }
     }
 
-    private void UpdateTrailData(TrailData data, float frameTime, MapCoordinates? parentCoord = null)
+    private void UpdateTrailData(TrailData data, float frameTime, MapCoordinates? parentCoords = null)
     {
         if (data.Segments.Last == null)
         {
@@ -103,7 +104,11 @@ public sealed class TrailSystem : EntitySystem
             return;
         }
         data.LifetimeAccumulator += frameTime;
-        data.UpdateDrawData(parentCoord);
+
+        if (parentCoords != null && parentCoords != MapCoordinates.Nullspace)
+            data.LastParentCoords = parentCoords.Value;
+        if (data.LastParentCoords.HasValue)
+            data.CalculatedDrawData = EnumerateDrawData(data).ToArray();
     }
 
     private void RemoveExpiredPoints(LinkedList<TrailSegment> segment, float trailLifetime)
@@ -162,8 +167,55 @@ public sealed class TrailSystem : EntitySystem
         if (newPos.InRange(coords, comp.Settings.СreationDistanceThreshold))
             return;
 
-
-
         segmentsList.AddLast(new TrailSegment(newPos, data.LifetimeAccumulator + data.Settings.Lifetime));
+    }
+
+    private static IEnumerable<TrailSegmentDrawData> EnumerateDrawData(TrailData data)
+    {
+        if (data.Segments.Last == null || data.LastParentCoords == null)
+            yield break;
+
+        var parentCoords = data.LastParentCoords.Value;
+        var mapId = parentCoords.MapId;
+
+        var baseOffset = data.Settings.Offset;
+
+        yield return ConstructDrawData(
+            0f,
+            baseOffset,
+            parentCoords.Position,
+            data.Segments.Last.Value.Coords.Position,
+            true);
+
+        var curNode = data.Segments.Last;
+        while (curNode != null)
+        {
+            var curSegment = curNode.Value;
+            if (curSegment.Coords.MapId == mapId)
+                yield return ConstructDrawData(
+                    (curSegment.ExistTil - data.LifetimeAccumulator) / data.Settings.Lifetime,
+                    baseOffset,
+                    curSegment.Coords.Position,
+                    curNode.Next?.Value.Coords.Position ?? parentCoords.Position,
+                    segment: curSegment
+                    );
+            curNode = curNode.Previous;
+        }
+    }
+
+    private static TrailSegmentDrawData ConstructDrawData(
+        float lifetimePercent,
+        Vector2 offset,
+        Vector2 curPos,
+        Vector2 nextPos,
+        bool flipAngle = false,
+        TrailSegment? segment = null
+        )
+    {
+        var angle = (nextPos - curPos).ToWorldAngle();
+        if (flipAngle)
+            angle = angle.Opposite();
+        var rotatedOffset = angle.RotateVec(offset);
+        return new TrailSegmentDrawData(curPos - rotatedOffset, curPos + rotatedOffset, angle, lifetimePercent, segment);
     }
 }

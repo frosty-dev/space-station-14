@@ -24,70 +24,13 @@ public sealed class TrailData
     [ViewVariables]
     public float LifetimeAccumulator { get; set; } //не доживет до ошибок с плавающей точкой надеюсь
     [ViewVariables]
-    public MapCoordinates? LastParentCoords { get; private set; } = null;
+    public MapCoordinates? LastParentCoords { get; set; } = null;
     [ViewVariables]
-    public IEnumerable<TrailSegmentDrawData> CalculatedDrawData { get; private set; } = Enumerable.Empty<TrailSegmentDrawData>();
+    public IEnumerable<TrailSegmentDrawData> CalculatedDrawData { get; set; } = Enumerable.Empty<TrailSegmentDrawData>();
 
     public TrailData(TrailSettings settings)
     {
         Settings = settings;
-    }
-
-    public void UpdateDrawData(MapCoordinates? parentCoords = null)
-    {
-        if (parentCoords != null && parentCoords != MapCoordinates.Nullspace)
-            LastParentCoords = parentCoords.Value;
-        if (LastParentCoords.HasValue)
-            CalculatedDrawData = EnumerateDrawData().ToArray();
-    }
-
-    private IEnumerable<TrailSegmentDrawData> EnumerateDrawData()
-    {
-        if (Segments.Last == null || LastParentCoords == null)
-            yield break;
-
-        var parentCoords = LastParentCoords.Value;
-        var mapId = parentCoords.MapId;
-
-        var baseOffset = Settings.Offset;
-
-        yield return ConstructDrawData(
-            0f,
-            baseOffset,
-            parentCoords.Position,
-            Segments.Last.Value.Coords.Position,
-            true);
-
-        var curNode = Segments.Last;
-        while (curNode != null)
-        {
-            var curSegment = curNode.Value;
-            if (curSegment.Coords.MapId == mapId)
-                yield return ConstructDrawData(
-                    (curSegment.ExistTil - LifetimeAccumulator) / Settings.Lifetime,
-                    baseOffset,
-                    curSegment.Coords.Position,
-                    curNode.Next?.Value.Coords.Position ?? parentCoords.Position,
-                    segment: curSegment
-                    );
-            curNode = curNode.Previous;
-        }
-    }
-
-    private static TrailSegmentDrawData ConstructDrawData(
-        float lifetimePercent,
-        Vector2 offset,
-        Vector2 curPos,
-        Vector2 nextPos,
-        bool flipAngle = false,
-        TrailSegment? segment = null
-        )
-    {
-        var angle = (nextPos - curPos).ToWorldAngle();
-        if (flipAngle)
-            angle = angle.Opposite();
-        var rotatedOffset = angle.RotateVec(offset);
-        return new TrailSegmentDrawData(curPos - rotatedOffset, curPos + rotatedOffset, angle, lifetimePercent, segment);
     }
 }
 
