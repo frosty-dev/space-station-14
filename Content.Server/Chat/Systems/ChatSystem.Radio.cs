@@ -31,7 +31,13 @@ public sealed partial class ChatSystem
 
         foreach (var proto in _prototypeManager.EnumeratePrototypes<RadioChannelPrototype>())
         {
-            _keyCodes.Add(proto.KeyCode, proto);
+            foreach (var keycode in proto.KeyCodes)
+            {
+                if (!_keyCodes.ContainsKey(keycode))
+                {
+                    _keyCodes.Add(keycode, proto);
+                }
+            }
         }
     }
 
