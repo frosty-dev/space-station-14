@@ -1,18 +1,19 @@
 ﻿using Content.Client.Changelog;
-using Content.Client.Credits;
 using Content.Client.UserInterface.Systems.EscapeMenu;
 using Content.Shared.CCVar;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
+using Robust.Shared.Collections;
 using Robust.Shared.Configuration;
-using Robust.Shared.IoC;
-using Robust.Shared.Localization;
-using Robust.Shared.Utility;
 
 namespace Content.Client.Info
 {
     public sealed class LinkBanner : BoxContainer
     {
+        private readonly IConfigurationManager _cfg;
+
+        private ValueList<(CVarDef<string> cVar, Button button)> _infoLinks;
+
         public LinkBanner()
         {
             var buttons = new BoxContainer
@@ -22,7 +23,7 @@ namespace Content.Client.Info
             AddChild(buttons);
 
             var uriOpener = IoCManager.Resolve<IUriOpener>();
-            var cfg = IoCManager.Resolve<IConfigurationManager>();
+            _cfg = IoCManager.Resolve<IConfigurationManager>();
 
             var rulesButton = new Button() {Text = Loc.GetString("server-info-rules-button")};
             rulesButton.OnPressed += args => new RulesAndInfoWindow().Open();
@@ -32,22 +33,27 @@ namespace Content.Client.Info
             AddInfoButton("server-info-website-button", CCVars.InfoLinksWebsite);
             AddInfoButton("server-info-wiki-button", CCVars.InfoLinksWiki);
             AddInfoButton("server-info-forum-button", CCVars.InfoLinksForum);
-            AddInfoButton("server-info-donate-button", CCVars.InfoLinksDonate);
 
             var changelogButton = new ChangelogButton();
             changelogButton.OnPressed += args => UserInterfaceManager.GetUIController<ChangelogUIController>().ToggleWindow();
-
             buttons.AddChild(changelogButton);
 
             void AddInfoButton(string loc, CVarDef<string> cVar)
             {
-                var link = cfg.GetCVar(cVar);
-                if (link == "")
-                    return;
-
                 var button = new Button { Text = Loc.GetString(loc) };
-                button.OnPressed += _ => uriOpener.OpenUri(link);
+                button.OnPressed += _ => uriOpener.OpenUri(_cfg.GetCVar(cVar));
                 buttons.AddChild(button);
+                _infoLinks.Add((cVar, button));
+            }
+        }
+
+        protected override void EnteredTree()
+        {
+            base.EnteredTree();
+
+            foreach (var (cVar, link) in _infoLinks)
+            {
+                link.Visible = _cfg.GetCVar(cVar) != "";
             }
         }
     }
