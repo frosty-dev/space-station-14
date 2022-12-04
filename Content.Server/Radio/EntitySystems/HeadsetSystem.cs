@@ -96,20 +96,7 @@ public sealed class HeadsetSystem : EntitySystem
             if (id == "Common") continue;
 
             var proto = _protoManager.Index<RadioChannelPrototype>(id);
-            var keycodes = "";
-            foreach (var keycode in proto.KeyCodes)
-            {
-                if (keycodes.Contains(keycode))
-                    continue;
-                if (keycodes == "")
-                {
-                    keycodes = keycode.ToString();
-                }
-                else
-                {
-                    keycodes += $" ,:{keycode.ToString()}";
-                }
-            }
+            var keycodes = string.Join(", :", proto.KeyCodes.ToArray());
             args.PushMarkup(Loc.GetString("examine-headset-channel",
                 ("color", proto.Color),
                 ("keys", keycodes),

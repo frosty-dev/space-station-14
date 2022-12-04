@@ -15,7 +15,7 @@ namespace Content.Shared.Radio
         /// <summary>
         /// Single-character prefix to determine what channel a message should be sent to.
         /// </summary>
-        [DataField("keycodes")] public HashSet<char> KeyCodes { get; private set; } = new() { '\0' };
+        [DataField("keycodes")] public List<char> KeyCodes { get; private set; } = new() { '\0' };
 
         [DataField("frequency")] public int Frequency { get; private set; } = 0;
 
