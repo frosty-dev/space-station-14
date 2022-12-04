@@ -33,10 +33,9 @@ public sealed partial class ChatSystem
         {
             foreach (var keycode in proto.KeyCodes)
             {
-                if (!_keyCodes.ContainsKey(keycode))
-                {
-                    _keyCodes.Add(keycode, proto);
-                }
+                if (_keyCodes.ContainsKey(keycode))
+                    continue;
+                _keyCodes.Add(keycode, proto);
             }
         }
     }
