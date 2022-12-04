@@ -20,6 +20,7 @@
   name: chat-radio-command
   keycodes:
     - 'к'
+    - 'c'
   frequency: 1353
   color: "#fcdf03"
 
@@ -28,6 +29,7 @@
   name: chat-radio-engineering
   keycodes:
     - 'и'
+    - 'e'
   frequency: 1357
   color: "#f37746"
 
@@ -36,6 +38,7 @@
   name: chat-radio-medical
   keycodes:
     - 'м'
+    - 'm'
   frequency: 1355
   color: "#57b8f0"
 
@@ -44,6 +47,7 @@
   name: chat-radio-science
   keycodes:
     - 'н'
+    - 'n'
   frequency: 1351
   color: "#c68cfa"
 
@@ -52,6 +56,7 @@
   name: chat-radio-security
   keycodes:
     - 'о'
+    - 's'
   frequency: 1359
   color: "#dd3535"
 
@@ -60,6 +65,7 @@
   name: chat-radio-service
   keycodes:
     - 'с'
+    - 'v'
   frequency: 1349
   color: "#6ca729"
 
@@ -68,6 +74,7 @@
   name: chat-radio-supply
   keycodes:
     - 'п'
+    - 'u'
   frequency: 1347
   color: "#b88646"
 
@@ -76,5 +83,6 @@
   name: chat-radio-syndicate
   keycodes:
     - 'т'
+    - 't'
   frequency: 1213
   color: "#8f4a4b"
