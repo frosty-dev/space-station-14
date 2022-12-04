@@ -94,14 +94,30 @@ public sealed class HeadsetSystem : EntitySystem
             if (id == "Common") continue;
 
             var proto = _protoManager.Index<RadioChannelPrototype>(id);
+            string keycodes = "";
             foreach (var keycode in proto.KeyCodes)
             {
-                args.PushMarkup(Loc.GetString("examine-headset-channel",
-                    ("color", proto.Color),
-                    ("key", keycode),
-                    ("id", proto.LocalizedName),
-                    ("freq", proto.Frequency)));
+                for (int i = 0; i<proto.KeyCodes.Count; i++)
+                {
+                    if (keycodes == "")
+                    {
+                        keycodes = keycode.ToString();
+                    }
+                    else if (i==proto.KeyCodes.Count-1)
+                    {
+                        keycodes += $" или {keycode.ToString()}";
+                    }
+                    else
+                    {
+                        keycodes += $" ,{keycode.ToString()}";
+                    }
+                }
             }
+            args.PushMarkup(Loc.GetString("examine-headset-channel",
+                ("color", proto.Color),
+                ("keys", keycodes),
+                ("id", proto.LocalizedName),
+                ("freq", proto.Frequency)));
         }
 
         args.PushMarkup(Loc.GetString("examine-headset-chat-prefix", ("prefix", ";")));
