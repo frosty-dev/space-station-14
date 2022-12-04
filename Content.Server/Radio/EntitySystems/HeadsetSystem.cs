@@ -99,22 +99,15 @@ public sealed class HeadsetSystem : EntitySystem
             var keycodes = "";
             foreach (var keycode in proto.KeyCodes)
             {
-                for (int i = 0; i<proto.KeyCodes.Count; i++)
+                if (keycodes.Contains(keycode))
+                    continue;
+                if (keycodes == "")
                 {
-                    if (keycodes.Contains(keycode))
-                        continue;
-                    if (keycodes == "")
-                    {
-                        keycodes = keycode.ToString();
-                    }
-                    else if (i==proto.KeyCodes.Count-2)
-                    {
-                        keycodes += $" или :{keycode.ToString()}";
-                    }
-                    else
-                    {
-                        keycodes += $" ,:{keycode.ToString()}";
-                    }
+                    keycodes = keycode.ToString();
+                }
+                else
+                {
+                    keycodes += $" ,:{keycode.ToString()}";
                 }
             }
             args.PushMarkup(Loc.GetString("examine-headset-channel",
