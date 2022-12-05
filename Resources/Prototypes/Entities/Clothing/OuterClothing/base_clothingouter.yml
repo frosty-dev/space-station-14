@@ -73,7 +73,6 @@
   - type: ContainerContainer
     containers:
       toggleable-clothing: !type:ContainerSlot {}
-  - type: GroupExamine
 
 - type: entity
   abstract: true

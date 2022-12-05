@@ -77,12 +77,20 @@ namespace Content.Server.Armor
             if (armorModifiers == null)
                 return;
 
+            var verb = new ExamineVerb()
+            {
+                Act = () =>
+                {
+                    var markup = GetArmorExamine(armorModifiers);
+                    _examine.SendExamineTooltip(args.User, uid, markup, false, false);
+                },
+                Text = Loc.GetString("armor-examinable-verb-text"),
+                Message = Loc.GetString("armor-examinable-verb-message"),
+                Category = VerbCategory.Examine,
+                IconTexture = "/Textures/Interface/VerbIcons/dot.svg.192dpi.png"
+            };
 
-            var examineMarkup = GetArmorExamine(armorModifiers);
-
-            _examine.AddDetailedExamineVerb(args, component, examineMarkup, Loc.GetString("armor-examinable-verb-text"), "/Textures/Interface/VerbIcons/dot.svg.192dpi.png", Loc.GetString("armor-examinable-verb-message"));
-
-            return;
+            args.Verbs.Add(verb);
         }
 
         private static FormattedMessage GetArmorExamine(DamageModifierSet armorModifiers)

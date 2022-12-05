@@ -117,7 +117,19 @@ public sealed class ClothingSpeedModifierSystem : EntitySystem
                 msg.AddMarkup(Loc.GetString("clothing-speed-decrease-walk-examine", ("walkSpeed", walkModifierPercentage)));
             }
         }
-        _examine.AddDetailedExamineVerb(args, component, msg, Loc.GetString("clothing-speed-examinable-verb-text"), "/Textures/Interface/VerbIcons/outfit.svg.192dpi.png", Loc.GetString("clothing-speed-examinable-verb-message"));
-        return;
+
+        var verb = new ExamineVerb()
+        {
+            Act = () =>
+            {
+                _examine.SendExamineTooltip(args.User, uid, msg, false, false);
+            },
+            Text = Loc.GetString("clothing-speed-examinable-verb-text"),
+            Message = Loc.GetString("clothing-speed-examinable-verb-message"),
+            Category = VerbCategory.Examine,
+            IconTexture = "/Textures/Interface/VerbIcons/outfit.svg.192dpi.png"
+        };
+
+        args.Verbs.Add(verb);
     }
 }
