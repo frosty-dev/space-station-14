@@ -13,9 +13,11 @@
         },
         {
             "name": "mw_unlit"
-        },		
+
+        },
         {
             "name": "mw0"
+
         },
         {
             "name": "mw_running_unlit",
@@ -32,12 +34,15 @@
         },
         {
             "name": "mwb"
+
         },
         {
             "name": "mwbloody"
+
         },
         {
             "name": "mwbloody0"
+
         },
         {
             "name": "mwbloody1",
