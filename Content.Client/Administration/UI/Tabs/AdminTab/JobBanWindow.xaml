@@ -43,21 +43,51 @@
             <Button Name="RDJobButton" Text="{Loc Research Director}"/>
 
             <Label Text="{Loc Security}"/>
+            <!-- <Button Name="HOSJobButton" Text="{Loc Head Of Security}"/> -->
+            <Button Name="WardenJobButton" Text="{Loc Warden}"/>
+            <Button Name="OfficerJobButton" Text="{Loc Officer}"/>
+            <Button Name="DetectiveJobButton" Text="{Loc Detective}"/>
+            <Button Name="CadetJobButton" Text="{Loc Cadet}"/>
 
             <Label Text="{Loc Medical}"/>
+            <!-- <Button Name="CMOJobButton" Text="{Loc Chief Medical Officer}"/> -->
+            <Button Name="ChemistJobButton" Text="{Loc Chemist}"/>
+            <Button Name="DoctorJobButton" Text="{Loc Doctor}"/>
+            <Button Name="InternJobButton" Text="{Loc Intern}"/>
+            <Button Name="PsychologistJobButton" Text="{Loc Psychologist}"/>
 
             <Label Text="{Loc Engineer}"/>
+            <!-- <Button Name="CEJobButton" Text="{Loc Chief Engineer}"/> -->
+            <Button Name="AtmosTechJobButton" Text="{Loc Atmospheric Technician}"/>
+            <Button Name="EngineerJobButton" Text="{Loc Engineer}"/>
+            <Button Name="TechAssistJobButton" Text="{Loc Technical Assistant}"/>
 
         </BoxContainer>
         <BoxContainer Orientation="Vertical">
             <Label Text="{Loc Juridical}"/>
-            <Button Name="AgentJobButton" Text="{Loc Agent of Internal Affairs}"/>
+            <Button Name="LawyerJobButton" Text="{Loc Lawyer}"/>
 
             <Label Text="{Loc Scientific}"/>
+            <!-- <Button Name="RDJobButton" Text="{Loc Research Director}"/> -->
+            <Button Name="ScientistJobButton" Text="{Loc Scientist}"/>
 
             <Label Text="{Loc Supply}"/>
+            <!-- <Button Name="QMJobButton" Text="{Loc Quartermaster}"/> -->
+            <Button Name="CargoTechJobButton" Text="{Loc Cargo Technician}"/>
+            <Button Name="SalvageSpecJobButton" Text="{Loc Salvage Specialist}"/>
 
             <Label Text="{Loc Civilian}"/>
+            <!-- <Button Name="HOPJobButton" Text="{Loc Head Of Personal}"/> -->
+            <Button Name="ServiceWorkerJobButton" Text="{Loc Service Worker}"/>
+            <Button Name="BotanistJobButton" Text="{Loc Botanist}"/>
+            <Button Name="ChefJobButton" Text="{Loc Chef}"/>
+            <Button Name="BartenderJobButton" Text="{Loc Bartender}"/>
+            <Button Name="JanitorJobButton" Text="{Loc Janitor}"/>
+            <Button Name="ClownJobButton" Text="{Loc Clown}"/>
+            <Button Name="MimeJobButton" Text="{Loc Mime}"/>
+            <Button Name="ChaplainJobButton" Text="{Loc Chaplain}"/>
+            <Button Name="LibrarianJobButton" Text="{Loc Librarian}"/>
+            <Button Name="MusicianJobButton" Text="{Loc Musician}"/>
         </BoxContainer>
     </BoxContainer>
 </DefaultWindow>

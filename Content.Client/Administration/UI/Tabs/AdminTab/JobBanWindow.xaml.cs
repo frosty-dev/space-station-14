@@ -37,6 +37,37 @@ namespace Content.Client.Administration.UI.Tabs.AdminTab
             QMJobButton.OnPressed += _ => SetJobName("Quartermaster");
             RDJobButton.OnPressed += _ => SetJobName("ResearchDirector");
             // Security Buttons
+            WardenJobButton.OnPressed += _ => SetJobName("Warden");
+            OfficerJobButton.OnPressed += _ => SetJobName("SecurityOfficer");
+            DetectiveJobButton.OnPressed += _ => SetJobName("Detective");
+            CadetJobButton.OnPressed += _ => SetJobName("SecurityCadet");
+            // Medical Buttons
+            ChemistJobButton.OnPressed += _ => SetJobName("Chemist");
+            DoctorJobButton.OnPressed += _ => SetJobName("MedicalDoctor");
+            InternJobButton.OnPressed += _ => SetJobName("MedicalIntern");
+            PsychologistJobButton.OnPressed += _ => SetJobName("Psychologist");
+            // Engineering Buttons
+            AtmosTechJobButton.OnPressed += _ => SetJobName("AtmosphericTechnician");
+            EngineerJobButton.OnPressed += _ => SetJobName("StationEngineer");
+            TechAssistJobButton.OnPressed += _ => SetJobName("TechnicalAssistant");
+            // Juridical Buttons
+            LawyerJobButton.OnPressed += _ => SetJobName("Lawyer");
+            // Scientific Buttons
+            ScientistJobButton.OnPressed += _ => SetJobName("Scientist");
+            // Supply Buttons
+            CargoTechJobButton.OnPressed += _ => SetJobName("CargoTechnician");
+            SalvageSpecJobButton.OnPressed += _ => SetJobName("SalvageSpecialist");
+            // Civilian Buttons
+            ServiceWorkerJobButton.OnPressed += _ => SetJobName("ServiceWorker");
+            BotanistJobButton.OnPressed += _ => SetJobName("Botanist");
+            ChefJobButton.OnPressed += _ => SetJobName("Chef");
+            BartenderJobButton.OnPressed += _ => SetJobName("Bartender");
+            JanitorJobButton.OnPressed += _ => SetJobName("Janitor");
+            ClownJobButton.OnPressed += _ => SetJobName("Clown");
+            MimeJobButton.OnPressed += _ => SetJobName("Mime");
+            ChaplainJobButton.OnPressed += _ => SetJobName("Chaplain");
+            LibrarianJobButton.OnPressed += _ => SetJobName("Librarian");
+            MusicianJobButton.OnPressed += _ => SetJobName("Musician");
         }
 
         private bool TryGetMinutes(string str, out uint minutes)
@@ -97,7 +128,8 @@ namespace Content.Client.Administration.UI.Tabs.AdminTab
 
         private void SubmitButtonOnPressed(BaseButton.ButtonEventArgs obj)
         {
-            IoCManager.Resolve<IClientConsoleHost>().ExecuteCommand("roleban \"{PlayerNameLine.Text}\" \"{JobNameLine.Text}\" \"{CommandParsing.Escape(ReasonLine.Text)}\" {MinutesLine.Text}");
+            IoCManager.Resolve<IClientConsoleHost>().ExecuteCommand(
+                $"roleban \"{PlayerNameLine.Text}\" \"{JobNameLine.Text}\" \"{CommandParsing.Escape(ReasonLine.Text)}\" {MinutesLine.Text}");
         }
     }
 }
