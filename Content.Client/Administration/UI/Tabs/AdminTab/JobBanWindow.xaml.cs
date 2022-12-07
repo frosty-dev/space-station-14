@@ -28,10 +28,17 @@ namespace Content.Client.Administration.UI.Tabs.AdminTab
             DayButton.OnPressed += _ => AddMinutes(1440);
             WeekButton.OnPressed += _ => AddMinutes(10080);
             MonthButton.OnPressed += _ => AddMinutes(43200);
+            // Command Buttons
+            CaptainJobButton.OnPressed += _ => SetJobName("Captain");
+            HOPJobButton.OnPressed += _ => SetJobName("HeadOfPersonnel");
+            HOSJobButton.OnPressed += _ => SetJobName("HeadOfSecurity");
+            CEJobButton.OnPressed += _ => SetJobName("ChiefEngineer");
+            CMOJobButton.OnPressed += _ => SetJobName("ChiefMedicalOfficer");
+            QMJobButton.OnPressed += _ => SetJobName("Quartermaster");
+            RDJobButton.OnPressed += _ => SetJobName("ResearchDirector");
+            // Security Buttons
         }
 
-        private bool _departmentSelected = false;
-        private readonly string[] _departments = {""};
         private bool TryGetMinutes(string str, out uint minutes)
         {
             if(string.IsNullOrWhiteSpace(str))
@@ -43,7 +50,7 @@ namespace Content.Client.Administration.UI.Tabs.AdminTab
             return uint.TryParse(str, out minutes);
         }
 
-        private void SetJob(string job)
+        private void SetJobName(string job)
         {
             JobNameLine.Text = job;
 
@@ -80,7 +87,6 @@ namespace Content.Client.Administration.UI.Tabs.AdminTab
         private void OnRoleNameChanged()
         {
             SubmitButton.Disabled = string.IsNullOrEmpty(JobNameLine.Text);
-            _departmentSelected = _departments.Contains(JobNameLine.Text);
         }
 
         public void OnPlayerSelectionChanged(PlayerInfo? player)
@@ -91,10 +97,7 @@ namespace Content.Client.Administration.UI.Tabs.AdminTab
 
         private void SubmitButtonOnPressed(BaseButton.ButtonEventArgs obj)
         {
-            IoCManager.Resolve<IClientConsoleHost>().ExecuteCommand(
-                _departmentSelected
-                    ? $"departmentban \"{PlayerNameLine.Text}\" \"{JobNameLine.Text}\" \"{CommandParsing.Escape(ReasonLine.Text)}\" {MinutesLine.Text}"
-                    : $"roleban \"{PlayerNameLine.Text}\" \"{JobNameLine.Text}\" \"{CommandParsing.Escape(ReasonLine.Text)}\" {MinutesLine.Text}");
+            IoCManager.Resolve<IClientConsoleHost>().ExecuteCommand("roleban \"{PlayerNameLine.Text}\" \"{JobNameLine.Text}\" \"{CommandParsing.Escape(ReasonLine.Text)}\" {MinutesLine.Text}");
         }
     }
 }

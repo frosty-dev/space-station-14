@@ -33,7 +33,7 @@
             <Button Name="SubmitButton" Text="{Loc Ban}" />
         </BoxContainer>
         <BoxContainer Orientation="Vertical">
-            <Button Name="CommandDepartmentButton" Group="Department" Text="{Loc Command}"/>
+            <Label Text="{Loc Command}"/>
             <Button Name="CaptainJobButton" Text="{Loc Captain}"/>
             <Button Name="HOPJobButton" Text="{Loc Head Of Personal}"/>
             <Button Name="HOSJobButton" Text="{Loc Head Of Security}"/>
@@ -42,20 +42,20 @@
             <Button Name="QMJobButton" Text="{Loc Quartermaster}"/>
             <Button Name="RDJobButton" Text="{Loc Research Director}"/>
 
-            <Button Name="SecurityDepartmentButton" Group="Department" Text="{Loc Security}"/>
+            <Label Text="{Loc Security}"/>
 
-            <Button Name="MedicalDepartmentButton" Group="Department" Text="{Loc Medical}"/>
+            <Label Text="{Loc Medical}"/>
 
-            <Button Name="EngineerDepartmentButton" Group="Department" Text="{Loc Engineer}"/>
+            <Label Text="{Loc Engineer}"/>
 
         </BoxContainer>
         <BoxContainer Orientation="Vertical">
             <Label Text="{Loc Juridical}"/>
             <Button Name="AgentJobButton" Text="{Loc Agent of Internal Affairs}"/>
 
-            <Button Name="ScientificDepartmentButton" Group="Department" Text="{Loc Scientific}"/>
+            <Label Text="{Loc Scientific}"/>
 
-            <Button Name="SupplyDepartmentButton" Group="Department" Text="{Loc Supply}"/>
+            <Label Text="{Loc Supply}"/>
 
             <Label Text="{Loc Civilian}"/>
         </BoxContainer>
